@@ -21,14 +21,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.FileNotFoundException;
+
+import processor.OpenCV.Filter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FilterFragment.OnFragmentInteractionListener,
         MorphologyFragment.OnFragmentInteractionListener {
+
 
     Bitmap bit1;
 
@@ -169,21 +171,49 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private Bitmap getCurBitmap() {
+        return bit1;
+    }
+
+    private void updateCurBitmap(Bitmap newBitmap) {
+        bit1 = newBitmap;
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        if (iv != null) {
+            iv.setImageBitmap(bit1);
+        }
+    }
+
     @Override
     public void onFilterButtonPressed(View view) {
-        TextView tv = (TextView) findViewById(R.id.test_textView);
         int id = view.getId();
-        switch (id) {
-            case R.id.mean_blur_button:
-                tv.setText("mean");
-                break;
-            case R.id.median_blur_button:
-                EditText editText = (EditText) findViewById(R.id.median_blur_editText);
-                int size = Integer.parseInt(editText.getText().toString());
-                break;
-            case R.id.gaussian_blur_button:
-                tv.setText("gaussian");
-                break;
+        if (id == R.id.mean_blur_button) {
+            EditText editText = (EditText) findViewById(R.id.mean_blur_editText);
+            int size = Integer.parseInt(editText.getText().toString());
+            updateCurBitmap(Filter.meanBlur(getCurBitmap(), size));
+        } else if (id == R.id.median_blur_button) {
+            EditText editText = (EditText) findViewById(R.id.median_blur_editText);
+            int size = Integer.parseInt(editText.getText().toString());
+            if (size % 2 == 1) {
+                updateCurBitmap(Filter.medianBlur(getCurBitmap(), size));
+            } else {
+                //TODO: show error
+            }
+        } else if (id == R.id.gaussian_blur_button) {
+            EditText editText = (EditText) findViewById(R.id.gaussian_blur_size_editText);
+            int size = Integer.parseInt(editText.getText().toString());
+            editText = (EditText) findViewById(R.id.gaussian_blur_sigma_editText);
+            double sigma = Double.parseDouble(editText.getText().toString());
+            if (size % 2 == 1) {
+                updateCurBitmap(Filter.gaussianBlur(getCurBitmap(), size, sigma));
+            } else {
+                //TODO: show error
+            }
+        } else if (id == R.id.sobel_button) {
+            updateCurBitmap(Filter.sobel(getCurBitmap()));
+        } else if (id == R.id.prewitt_button) {
+            updateCurBitmap(Filter.prewitt(getCurBitmap()));
+        } else if (id == R.id.roberts_button) {
+            updateCurBitmap(Filter.roberts(getCurBitmap()));
         }
     }
 }

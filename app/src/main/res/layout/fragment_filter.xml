@@ -25,13 +25,22 @@
         android:onClick="onFilterButtonPressed"
         android:text="median" />
 
+    <EditText
+        android:id="@+id/mean_blur_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/median_blur_button"
+        android:layout_alignEnd="@+id/mean_blur_button"
+        android:layout_alignStart="@+id/mean_blur_button"
+        android:ems="10"
+        android:inputType="number"
+        android:text="3" />
+
     <Button
         android:id="@+id/mean_blur_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/median_blur_editText"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal|top"
         android:onClick="onFilterButtonPressed"
@@ -41,11 +50,57 @@
         android:id="@+id/gaussian_blur_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/gaussian_blur_sigma_editText"
         android:layout_gravity="end|top"
         android:onClick="onFilterButtonPressed"
         android:text="gaussian" />
+
+    <EditText
+        android:id="@+id/gaussian_blur_size_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mean_blur_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/gaussian_blur_button"
+        android:inputType="number"
+        android:text="3" />
+
+    <Button
+        android:id="@+id/sobel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/median_blur_button"
+        android:layout_alignParentBottom="true"
+        android:onClick="onFilterButtonPressed"
+        android:text="sobel" />
+
+    <Button
+        android:id="@+id/prewitt_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/sobel_button"
+        android:layout_centerHorizontal="true"
+        android:onClick="onFilterButtonPressed"
+        android:text="prewitt" />
+
+    <Button
+        android:id="@+id/roberts_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/gaussian_blur_button"
+        android:onClick="onFilterButtonPressed"
+        android:text="roberts" />
+
+    <EditText
+        android:id="@+id/gaussian_blur_sigma_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/gaussian_blur_size_editText"
+        android:layout_below="@+id/gaussian_blur_size_editText"
+        android:text="0.0"
+        android:inputType="numberDecimal" />
 
 </RelativeLayout>
