@@ -8,9 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,6 +23,7 @@ import android.widget.ImageView;
 import java.io.FileNotFoundException;
 
 import processor.OpenCV.Filter;
+import processor.OpenCV.Morphology;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -41,15 +40,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -58,11 +48,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction tx = fm.beginTransaction();
-        tx.add(R.id.op_layout, new FilterFragment(), "ONE");
-        tx.commit();
     }
 
     @Override
@@ -111,12 +96,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
             if (bit1 != null) {
                 ImageView iv = (ImageView) findViewById(R.id.imageView);
-                ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
-                if (iv != null && iv1 != null) {
+                if (iv != null) {
                     int[] pixels = new int[bit1.getHeight() * bit1.getWidth()];
                     bit1.getPixels(pixels, 0, bit1.getWidth(), 0, 0, bit1.getWidth(), bit1.getHeight());
-                    int[] dst = new int[bit1.getHeight() * bit1.getWidth()];
-                    bit1.setPixels(dst, 0, bit1.getWidth(), 0, 0, bit1.getWidth(), bit1.getHeight());
                     iv.setImageBitmap(bit1);
                 }
             }
@@ -126,10 +108,16 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.menu_op_filter) {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.op_layout, new FilterFragment(), "fragment_filter");
+            fragmentTransaction.commit();
+        } else if (id == R.id.menu_op_morphology) {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.op_layout, new MorphologyFragment(), "fragment_filter");
+            fragmentTransaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -166,11 +154,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
     private Bitmap getCurBitmap() {
         return bit1;
     }
@@ -185,16 +168,20 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFilterButtonPressed(View view) {
+        Bitmap bitmap = getCurBitmap();
+        if (bitmap == null) {
+            return;
+        }
         int id = view.getId();
         if (id == R.id.mean_blur_button) {
             EditText editText = (EditText) findViewById(R.id.mean_blur_editText);
             int size = Integer.parseInt(editText.getText().toString());
-            updateCurBitmap(Filter.meanBlur(getCurBitmap(), size));
+            updateCurBitmap(Filter.meanBlur(bitmap, size));
         } else if (id == R.id.median_blur_button) {
             EditText editText = (EditText) findViewById(R.id.median_blur_editText);
             int size = Integer.parseInt(editText.getText().toString());
             if (size % 2 == 1) {
-                updateCurBitmap(Filter.medianBlur(getCurBitmap(), size));
+                updateCurBitmap(Filter.medianBlur(bitmap, size));
             } else {
                 //TODO: show error
             }
@@ -204,16 +191,34 @@ public class MainActivity extends AppCompatActivity
             editText = (EditText) findViewById(R.id.gaussian_blur_sigma_editText);
             double sigma = Double.parseDouble(editText.getText().toString());
             if (size % 2 == 1) {
-                updateCurBitmap(Filter.gaussianBlur(getCurBitmap(), size, sigma));
+                updateCurBitmap(Filter.gaussianBlur(bitmap, size, sigma));
             } else {
                 //TODO: show error
             }
         } else if (id == R.id.sobel_button) {
-            updateCurBitmap(Filter.sobel(getCurBitmap()));
+            updateCurBitmap(Filter.sobel(bitmap));
         } else if (id == R.id.prewitt_button) {
-            updateCurBitmap(Filter.prewitt(getCurBitmap()));
+            updateCurBitmap(Filter.prewitt(bitmap));
         } else if (id == R.id.roberts_button) {
-            updateCurBitmap(Filter.roberts(getCurBitmap()));
+            updateCurBitmap(Filter.roberts(bitmap));
+        }
+    }
+
+    @Override
+    public void onMorphologyButtonPressed(View view) {
+        Bitmap bitmap = getCurBitmap();
+        if (bitmap == null) {
+            return;
+        }
+        int id = view.getId();
+        if (id == R.id.morphology_erode_button) {
+            updateCurBitmap(Morphology.erode(bitmap));
+        } else if (id == R.id.morphology_dilate_button) {
+            updateCurBitmap(Morphology.dilate(bitmap));
+        } else if (id == R.id.morphology_open_button) {
+            updateCurBitmap(Morphology.open(bitmap));
+        } else if (id == R.id.morphology_close_button) {
+            updateCurBitmap(Morphology.close(bitmap));
         }
     }
 }

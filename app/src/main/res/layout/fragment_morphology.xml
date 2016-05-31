@@ -4,17 +4,35 @@
     android:layout_height="match_parent"
     tools:context="superbiayang.imageprocessing.MorphologyFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <Button
+        android:id="@+id/morphology_erode_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+        android:onClick="onMorphologyButtonPressed"
+        android:text="erode" />
 
     <Button
-        android:id="@+id/button7"
-        android:layout_width="312dp"
-        android:layout_height="214dp"
-        android:layout_gravity="center"
-        android:text="New Button" />
+        android:id="@+id/morphology_dilate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:onClick="onMorphologyButtonPressed"
+        android:text="dilate" />
 
+    <Button
+        android:id="@+id/morphology_open_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|bottom"
+        android:onClick="onMorphologyButtonPressed"
+        android:text="open" />
+
+    <Button
+        android:id="@+id/morphology_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:onClick="onMorphologyButtonPressed"
+        android:text="close" />
 </FrameLayout>
