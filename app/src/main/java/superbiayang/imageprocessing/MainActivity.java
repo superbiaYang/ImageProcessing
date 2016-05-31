@@ -22,16 +22,17 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 
+import processor.Grayscale;
 import processor.OpenCV.Filter;
 import processor.OpenCV.Morphology;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FilterFragment.OnFragmentInteractionListener,
-        MorphologyFragment.OnFragmentInteractionListener {
-
-
+        MorphologyFragment.OnFragmentInteractionListener,
+        GrayscaleFragment.OnFragmentInteractionListener {
     Bitmap bit1;
+    private CurBitmapType curBitMapType = CurBitmapType.NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -117,6 +117,11 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.op_layout, new MorphologyFragment(), "fragment_filter");
+            fragmentTransaction.commit();
+        } else if (id == R.id.menu_op_grayscale) {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.op_layout, new GrayscaleFragment(), "fragment_filter");
             fragmentTransaction.commit();
         }
 
@@ -134,15 +139,7 @@ public class MainActivity extends AppCompatActivity
                 Uri uri = data.getData();
                 try {
                     ContentResolver cr = this.getContentResolver();
-                    if (bit1 != null) {
-                        bit1.recycle();
-                    }
-                    bit1 = BitmapFactory.decodeStream(cr.openInputStream(uri));
-
-                    ImageView iv = (ImageView) findViewById(R.id.imageView);
-                    if (iv != null) {
-                        iv.setImageBitmap(bit1);
-                    }
+                    updateCurBitmap(BitmapFactory.decodeStream(cr.openInputStream(uri)), CurBitmapType.COLOR);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -164,6 +161,16 @@ public class MainActivity extends AppCompatActivity
         if (iv != null) {
             iv.setImageBitmap(bit1);
         }
+    }
+
+    private void updateCurBitmap(Bitmap newBitmap, CurBitmapType type) {
+        updateCurBitmap(newBitmap);
+        updateCurBitmapType(type);
+    }
+
+    private void updateCurBitmapType(CurBitmapType type) {
+        curBitMapType = type;
+        updateMenu();
     }
 
     @Override
@@ -221,4 +228,53 @@ public class MainActivity extends AppCompatActivity
             updateCurBitmap(Morphology.close(bitmap));
         }
     }
+
+    @Override
+    public void onGrayscaleButtonPressed(View view) {
+        Bitmap bitmap = getCurBitmap();
+        int id = view.getId();
+        Grayscale.Return ret = null;
+        if (id == R.id.grayscale_red_button) {
+            ret = Grayscale.generate(bitmap, Grayscale.GrayType.RED);
+        } else if (id == R.id.grayscale_green_button) {
+            ret = Grayscale.generate(bitmap, Grayscale.GrayType.GREEN);
+        } else if (id == R.id.grayscale_blue_button) {
+            ret = Grayscale.generate(bitmap, Grayscale.GrayType.BLUE);
+        } else if (id == R.id.grayscale_avg_button) {
+            ret = Grayscale.generate(bitmap, Grayscale.GrayType.AVG);
+        } else if (id == R.id.grayscale_opencv_button) {
+            ret = Grayscale.generate(bitmap, Grayscale.GrayType.OPENCV);
+        } else if (id == R.id.grayscale_bio_button) {
+            ret = Grayscale.generate(bitmap, Grayscale.GrayType.BIO);
+        }
+        updateCurBitmap(ret.bitmap, CurBitmapType.GRAY);
+        ImageView histogram = (ImageView) findViewById(R.id.grayscale_histogram_imageView);
+        histogram.setImageBitmap(Grayscale.Histogram(ret.histogram));
+    }
+
+    public void updateMenu() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+        if (curBitMapType == CurBitmapType.COLOR) {
+            menu.findItem(R.id.menu_op_grayscale).setEnabled(true);
+            menu.findItem(R.id.menu_op_filter).setEnabled(true);
+            menu.findItem(R.id.menu_op_morphology).setEnabled(true);
+        } else if (curBitMapType == CurBitmapType.GRAY) {
+            menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
+            menu.findItem(R.id.menu_op_filter).setEnabled(true);
+            menu.findItem(R.id.menu_op_morphology).setEnabled(true);
+        } else if (curBitMapType == CurBitmapType.BINARY) {
+            menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
+            menu.findItem(R.id.menu_op_filter).setEnabled(true);
+            menu.findItem(R.id.menu_op_morphology).setEnabled(true);
+        }
+    }
+
+    private enum CurBitmapType {
+        NONE,
+        COLOR,
+        GRAY,
+        BINARY
+    }
+
 }

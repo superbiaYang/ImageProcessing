@@ -23,10 +23,16 @@
     <item android:title="Operation">
         <menu>
             <item
+                android:id="@+id/menu_op_grayscale"
+                android:enabled="false"
+                android:title="Grayscale" />
+            <item
                 android:id="@+id/menu_op_filter"
+                android:enabled="false"
                 android:title="Filter" />
             <item
                 android:id="@+id/menu_op_morphology"
+                android:enabled="false"
                 android:title="Morphology" />
         </menu>
     </item>
