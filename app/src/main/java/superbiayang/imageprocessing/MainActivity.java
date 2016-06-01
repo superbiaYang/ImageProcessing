@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 
+import processor.Binary;
 import processor.Grayscale;
 import processor.OpenCV.Filter;
 import processor.OpenCV.Morphology;
@@ -30,9 +31,15 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FilterFragment.OnFragmentInteractionListener,
         MorphologyFragment.OnFragmentInteractionListener,
-        GrayscaleFragment.OnFragmentInteractionListener {
-    Bitmap bit1;
-    private CurBitmapType curBitMapType = CurBitmapType.NONE;
+        GrayscaleFragment.OnFragmentInteractionListener,
+        BinaryFragment.OnFragmentInteractionListener {
+    private int[] curPic = null;
+    private int curWidth = 0;
+    private int curHeight = 0;
+    private int[] originalPic = null;
+    private int[] histogram = null;
+    private CurPicType curPicType = CurPicType.NONE;
+    private PicManager picManager = new PicManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,21 +95,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        originalPic = null;
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
             openAlbumIntent.setType("image/*");
             startActivityForResult(openAlbumIntent, 0);
         } else if (id == R.id.nav_gallery) {
-            if (bit1 != null) {
-                ImageView iv = (ImageView) findViewById(R.id.imageView);
-                if (iv != null) {
-                    int[] pixels = new int[bit1.getHeight() * bit1.getWidth()];
-                    bit1.getPixels(pixels, 0, bit1.getWidth(), 0, 0, bit1.getWidth(), bit1.getHeight());
-                    iv.setImageBitmap(bit1);
-                }
-            }
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -116,12 +115,19 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_op_morphology) {
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.op_layout, new MorphologyFragment(), "fragment_filter");
+            fragmentTransaction.replace(R.id.op_layout, new MorphologyFragment(), "fragment_morphology");
             fragmentTransaction.commit();
         } else if (id == R.id.menu_op_grayscale) {
+            originalPic = curPic;
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.op_layout, new GrayscaleFragment(), "fragment_filter");
+            fragmentTransaction.replace(R.id.op_layout, new GrayscaleFragment(), "fragment_grayscale");
+            fragmentTransaction.commit();
+        } else if (id == R.id.menu_op_binary) {
+            originalPic = curPic;
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.op_layout, new BinaryFragment(), "fragment_binary");
             fragmentTransaction.commit();
         }
 
@@ -139,7 +145,9 @@ public class MainActivity extends AppCompatActivity
                 Uri uri = data.getData();
                 try {
                     ContentResolver cr = this.getContentResolver();
-                    updateCurBitmap(BitmapFactory.decodeStream(cr.openInputStream(uri)), CurBitmapType.COLOR);
+                    picManager.init(BitmapFactory.decodeStream(cr.openInputStream(uri)));
+                    updateCurPic(picManager.getColorPixels(), picManager.getWidth(), picManager.getHeight(), CurPicType.COLOR);
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -151,44 +159,41 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private Bitmap getCurBitmap() {
-        return bit1;
+    private void updateCurPic(int[] pixels) {
+        curPic = pixels;
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setImageBitmap(Bitmap.createBitmap(curPic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
     }
 
-    private void updateCurBitmap(Bitmap newBitmap) {
-        bit1 = newBitmap;
-        ImageView iv = (ImageView) findViewById(R.id.imageView);
-        if (iv != null) {
-            iv.setImageBitmap(bit1);
-        }
-    }
+    private void updateCurPic(int[] pixels, CurPicType type) {
+        updateCurPic(pixels);
 
-    private void updateCurBitmap(Bitmap newBitmap, CurBitmapType type) {
-        updateCurBitmap(newBitmap);
-        updateCurBitmapType(type);
-    }
-
-    private void updateCurBitmapType(CurBitmapType type) {
-        curBitMapType = type;
+        curPicType = type;
         updateMenu();
+    }
+
+    private void updateCurPic(int[] pixels, int width, int height, CurPicType type) {
+        curWidth = width;
+        curHeight = height;
+        updateCurPic(pixels, type);
     }
 
     @Override
     public void onFilterButtonPressed(View view) {
-        Bitmap bitmap = getCurBitmap();
-        if (bitmap == null) {
+        if (curPic == null) {
             return;
         }
+        int[] dst = new int[curWidth * curHeight];
         int id = view.getId();
         if (id == R.id.mean_blur_button) {
             EditText editText = (EditText) findViewById(R.id.mean_blur_editText);
             int size = Integer.parseInt(editText.getText().toString());
-            updateCurBitmap(Filter.meanBlur(bitmap, size));
+            Filter.meanBlur(curPic, dst, curWidth, curHeight, size);
         } else if (id == R.id.median_blur_button) {
             EditText editText = (EditText) findViewById(R.id.median_blur_editText);
             int size = Integer.parseInt(editText.getText().toString());
             if (size % 2 == 1) {
-                updateCurBitmap(Filter.medianBlur(bitmap, size));
+                Filter.medianBlur(curPic, dst, curWidth, curHeight, size);
             } else {
                 //TODO: show error
             }
@@ -198,56 +203,62 @@ public class MainActivity extends AppCompatActivity
             editText = (EditText) findViewById(R.id.gaussian_blur_sigma_editText);
             double sigma = Double.parseDouble(editText.getText().toString());
             if (size % 2 == 1) {
-                updateCurBitmap(Filter.gaussianBlur(bitmap, size, sigma));
+                Filter.gaussianBlur(curPic, dst, curWidth, curHeight, size, sigma);
             } else {
                 //TODO: show error
             }
         } else if (id == R.id.sobel_button) {
-            updateCurBitmap(Filter.sobel(bitmap));
+            Filter.sobel(curPic, dst, curWidth, curHeight);
         } else if (id == R.id.prewitt_button) {
-            updateCurBitmap(Filter.prewitt(bitmap));
+            Filter.prewitt(curPic, dst, curWidth, curHeight);
         } else if (id == R.id.roberts_button) {
-            updateCurBitmap(Filter.roberts(bitmap));
+            Filter.roberts(curPic, dst, curWidth, curHeight);
         }
+        updateCurPic(dst);
     }
 
     @Override
     public void onMorphologyButtonPressed(View view) {
-        Bitmap bitmap = getCurBitmap();
-        if (bitmap == null) {
+        if (curPic == null) {
             return;
         }
+        int[] dst = new int[curWidth * curHeight];
         int id = view.getId();
         if (id == R.id.morphology_erode_button) {
-            updateCurBitmap(Morphology.erode(bitmap));
+            Morphology.erode(curPic, dst, curWidth, curHeight);
         } else if (id == R.id.morphology_dilate_button) {
-            updateCurBitmap(Morphology.dilate(bitmap));
+            Morphology.dilate(curPic, dst, curWidth, curHeight);
         } else if (id == R.id.morphology_open_button) {
-            updateCurBitmap(Morphology.open(bitmap));
+            Morphology.open(curPic, dst, curWidth, curHeight);
         } else if (id == R.id.morphology_close_button) {
-            updateCurBitmap(Morphology.close(bitmap));
+            Morphology.close(curPic, dst, curWidth, curHeight);
         }
+        updateCurPic(dst);
     }
 
     @Override
     public void onGrayscaleButtonPressed(View view) {
-        Bitmap bitmap = getCurBitmap();
+        if (originalPic == null) {
+            return;
+        }
+        int[] dst = new int[curWidth * curHeight];
         int id = view.getId();
         Grayscale.Return ret = null;
         if (id == R.id.grayscale_red_button) {
-            ret = Grayscale.generate(bitmap, Grayscale.GrayType.RED);
+            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.RED);
         } else if (id == R.id.grayscale_green_button) {
-            ret = Grayscale.generate(bitmap, Grayscale.GrayType.GREEN);
+            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.GREEN);
         } else if (id == R.id.grayscale_blue_button) {
-            ret = Grayscale.generate(bitmap, Grayscale.GrayType.BLUE);
+            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.BLUE);
         } else if (id == R.id.grayscale_avg_button) {
-            ret = Grayscale.generate(bitmap, Grayscale.GrayType.AVG);
+            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.AVG);
         } else if (id == R.id.grayscale_opencv_button) {
-            ret = Grayscale.generate(bitmap, Grayscale.GrayType.OPENCV);
+            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.OPENCV);
         } else if (id == R.id.grayscale_bio_button) {
-            ret = Grayscale.generate(bitmap, Grayscale.GrayType.BIO);
+            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.BIO);
         }
-        updateCurBitmap(ret.bitmap, CurBitmapType.GRAY);
+        updateCurPic(ret.pixels, CurPicType.GRAY);
+        histogram = ret.histogram;
         ImageView histogram = (ImageView) findViewById(R.id.grayscale_histogram_imageView);
         histogram.setImageBitmap(Grayscale.Histogram(ret.histogram));
     }
@@ -255,22 +266,35 @@ public class MainActivity extends AppCompatActivity
     public void updateMenu() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        if (curBitMapType == CurBitmapType.COLOR) {
+        if (curPicType == CurPicType.COLOR) {
+            menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(true);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
-        } else if (curBitMapType == CurBitmapType.GRAY) {
+        } else if (curPicType == CurPicType.GRAY) {
+            menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
-        } else if (curBitMapType == CurBitmapType.BINARY) {
+        } else if (curPicType == CurPicType.BINARY) {
+            menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
         }
     }
 
-    private enum CurBitmapType {
+    @Override
+    public int getOtusThreshold() {
+        return histogram == null ? 0 : Binary.otsu(histogram);
+    }
+
+    @Override
+    public void onBinaryThresholdUpdate(int min, int max) {
+        updateCurPic(Binary.generate(originalPic, curWidth, curHeight, min, max), CurPicType.GRAY);
+    }
+
+    private enum CurPicType {
         NONE,
         COLOR,
         GRAY,

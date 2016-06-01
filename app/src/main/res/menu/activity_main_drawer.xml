@@ -27,6 +27,10 @@
                 android:enabled="false"
                 android:title="Grayscale" />
             <item
+                android:id="@+id/menu_op_binary"
+                android:enabled="false"
+                android:title="Binary" />
+            <item
                 android:id="@+id/menu_op_filter"
                 android:enabled="false"
                 android:title="Filter" />

@@ -1,0 +1,43 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="superbiayang.imageprocessing.BinaryFragment">
+
+    <EditText
+        android:id="@+id/binary_min_editText"
+        android:layout_width="62dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|top"
+        android:ems="10"
+        android:inputType="number"
+        android:text="0" />
+
+    <ImageView
+        android:id="@+id/binary_histogram_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/binary_otsu_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:text="otsu" />
+
+    <view.component.BinarySeekBar
+        android:id="@+id/binary_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical" />
+
+    <EditText
+        android:id="@+id/binary_max_editText"
+        android:layout_width="97dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:ems="10"
+        android:inputType="number"
+        android:text="255" />
+</FrameLayout>
