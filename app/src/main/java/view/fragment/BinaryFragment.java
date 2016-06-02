@@ -1,4 +1,4 @@
-package superbiayang.imageprocessing;
+package view.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import superbiayang.imageprocessing.R;
 import view.component.BinarySeekBar;
 
 

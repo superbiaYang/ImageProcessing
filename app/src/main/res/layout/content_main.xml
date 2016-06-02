@@ -12,12 +12,23 @@
     tools:context="superbiayang.imageprocessing.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <ImageView
+        android:id="@+id/base_imageView"
+        android:layout_width="112.5dp"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="false"
+        android:onClick="onBasePicClicked" />
+
     <RelativeLayout
         android:id="@+id/op_layout"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"></RelativeLayout>
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/base_imageView">
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageView"

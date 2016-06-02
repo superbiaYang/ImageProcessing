@@ -1,4 +1,4 @@
-package superbiayang.imageprocessing;
+package view.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import processor.Grayscale;
+import superbiayang.imageprocessing.R;
 
 
 /**
@@ -16,7 +20,7 @@ import android.view.ViewGroup;
  * Use the {@link GrayscaleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GrayscaleFragment extends Fragment {
+public class GrayscaleFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     public GrayscaleFragment() {
@@ -47,7 +51,21 @@ public class GrayscaleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_grayscale, container, false);
+        View view = inflater.inflate(R.layout.fragment_grayscale, container, false);
+        int[] buttonId = {
+                R.id.grayscale_red_button,
+                R.id.grayscale_green_button,
+                R.id.grayscale_blue_button,
+                R.id.grayscale_avg_button,
+                R.id.grayscale_opencv_button,
+                R.id.grayscale_bio_button,
+        };
+        for (int id : buttonId) {
+            Button button = (Button) view.findViewById(id);
+            button.setOnClickListener(this);
+        }
+
+        return view;
     }
 
     @Override
@@ -67,6 +85,24 @@ public class GrayscaleFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.grayscale_red_button) {
+            mListener.grayscale(Grayscale.GrayType.RED);
+        } else if (id == R.id.grayscale_green_button) {
+            mListener.grayscale(Grayscale.GrayType.GREEN);
+        } else if (id == R.id.grayscale_blue_button) {
+            mListener.grayscale(Grayscale.GrayType.BLUE);
+        } else if (id == R.id.grayscale_avg_button) {
+            mListener.grayscale(Grayscale.GrayType.AVG);
+        } else if (id == R.id.grayscale_opencv_button) {
+            mListener.grayscale(Grayscale.GrayType.OPENCV);
+        } else if (id == R.id.grayscale_bio_button) {
+            mListener.grayscale(Grayscale.GrayType.BIO);
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -78,6 +114,6 @@ public class GrayscaleFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onGrayscaleButtonPressed(View view);
+        void grayscale(Grayscale.GrayType type);
     }
 }

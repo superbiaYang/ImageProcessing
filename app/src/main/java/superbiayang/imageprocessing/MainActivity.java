@@ -1,5 +1,6 @@
 package superbiayang.imageprocessing;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
@@ -14,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,24 +24,37 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 
+import processor.Basic;
 import processor.Binary;
 import processor.Grayscale;
 import processor.OpenCV.Filter;
 import processor.OpenCV.Morphology;
+import view.fragment.BasicFragment;
+import view.fragment.BinaryFragment;
+import view.fragment.GrayscaleFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FilterFragment.OnFragmentInteractionListener,
         MorphologyFragment.OnFragmentInteractionListener,
         GrayscaleFragment.OnFragmentInteractionListener,
-        BinaryFragment.OnFragmentInteractionListener {
+        BinaryFragment.OnFragmentInteractionListener,
+        BasicFragment.OnFragmentInteractionListener {
+    private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
+
+    static {
+        MenuIdFragmentTag.append(R.id.menu_op_basic, "BASIC_FRAGMENT");
+    }
+
     private int[] curPic = null;
     private int curWidth = 0;
     private int curHeight = 0;
-    private int[] originalPic = null;
+    private int[] basePic = null;
+    private PicType basePicType = PicType.NONE;
     private int[] histogram = null;
-    private CurPicType curPicType = CurPicType.NONE;
+    private PicType curPicType = PicType.NONE;
     private PicManager picManager = new PicManager();
+    private int curFragment = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +110,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        originalPic = null;
+        basePic = null;
         if (id == R.id.nav_camera) {
             // Handle the camera action
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -117,23 +132,44 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.op_layout, new MorphologyFragment(), "fragment_morphology");
             fragmentTransaction.commit();
-        } else if (id == R.id.menu_op_grayscale) {
-            originalPic = curPic;
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.op_layout, new GrayscaleFragment(), "fragment_grayscale");
-            fragmentTransaction.commit();
-        } else if (id == R.id.menu_op_binary) {
-            originalPic = curPic;
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.op_layout, new BinaryFragment(), "fragment_binary");
-            fragmentTransaction.commit();
+        } else {
+            showProcessorFragment(id);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showProcessorFragment(int id) {
+        if (id == curFragment) {
+            return;
+        }
+        basePic = curPic;
+        basePicType = curPicType;
+        ImageView view = (ImageView) findViewById(R.id.base_imageView);
+        if (view != null) {
+            view.setImageBitmap(Bitmap.createBitmap(basePic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
+        }
+        String tag = "fragment_" + id;
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+        if (fragment == null) {
+            switch (id) {
+                case R.id.menu_op_basic:
+                    fragment = BasicFragment.newInstance();
+                    break;
+                case R.id.menu_op_grayscale:
+                    fragment = GrayscaleFragment.newInstance();
+                    break;
+                case R.id.menu_op_binary:
+                    fragment = BinaryFragment.newInstance();
+                    break;
+            }
+        }
+        fragmentTransaction.replace(R.id.op_layout, fragment, tag);
+        fragmentTransaction.commit();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -146,8 +182,8 @@ public class MainActivity extends AppCompatActivity
                 try {
                     ContentResolver cr = this.getContentResolver();
                     picManager.init(BitmapFactory.decodeStream(cr.openInputStream(uri)));
-                    updateCurPic(picManager.getColorPixels(), picManager.getWidth(), picManager.getHeight(), CurPicType.COLOR);
-
+                    updateCurPic(picManager.getColorPixels(), picManager.getWidth(), picManager.getHeight(), PicType.COLOR);
+                    showProcessorFragment(R.id.menu_op_basic);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -165,17 +201,21 @@ public class MainActivity extends AppCompatActivity
         imageView.setImageBitmap(Bitmap.createBitmap(curPic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
     }
 
-    private void updateCurPic(int[] pixels, CurPicType type) {
+    private void updateCurPic(int[] pixels, PicType type) {
         updateCurPic(pixels);
 
         curPicType = type;
         updateMenu();
     }
 
-    private void updateCurPic(int[] pixels, int width, int height, CurPicType type) {
+    private void updateCurPic(int[] pixels, int width, int height, PicType type) {
         curWidth = width;
         curHeight = height;
         updateCurPic(pixels, type);
+    }
+
+    public void onBasePicClicked(View view) {
+        updateCurPic(basePic, basePicType);
     }
 
     @Override
@@ -237,47 +277,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onGrayscaleButtonPressed(View view) {
-        if (originalPic == null) {
-            return;
-        }
-        int[] dst = new int[curWidth * curHeight];
-        int id = view.getId();
-        Grayscale.Return ret = null;
-        if (id == R.id.grayscale_red_button) {
-            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.RED);
-        } else if (id == R.id.grayscale_green_button) {
-            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.GREEN);
-        } else if (id == R.id.grayscale_blue_button) {
-            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.BLUE);
-        } else if (id == R.id.grayscale_avg_button) {
-            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.AVG);
-        } else if (id == R.id.grayscale_opencv_button) {
-            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.OPENCV);
-        } else if (id == R.id.grayscale_bio_button) {
-            ret = Grayscale.generate(originalPic, curWidth, curHeight, Grayscale.GrayType.BIO);
-        }
-        updateCurPic(ret.pixels, CurPicType.GRAY);
+    public void grayscale(Grayscale.GrayType type) {
+        Grayscale.Return ret = Grayscale.generate(basePic, curWidth, curHeight, type);
+        updateCurPic(ret.pixels, PicType.GRAY);
         histogram = ret.histogram;
         ImageView histogram = (ImageView) findViewById(R.id.grayscale_histogram_imageView);
-        histogram.setImageBitmap(Grayscale.Histogram(ret.histogram));
+        if (histogram != null) {
+            histogram.setImageBitmap(Grayscale.Histogram(ret.histogram));
+        }
     }
 
     public void updateMenu() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        if (curPicType == CurPicType.COLOR) {
-            menu.findItem(R.id.menu_op_binary).setEnabled(true);
+        if (curPicType == PicType.COLOR) {
+            menu.findItem(R.id.menu_op_basic).setEnabled(true);
+            menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(true);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
-        } else if (curPicType == CurPicType.GRAY) {
+        } else if (curPicType == PicType.GRAY) {
+            menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
-        } else if (curPicType == CurPicType.BINARY) {
-            menu.findItem(R.id.menu_op_binary).setEnabled(true);
+        } else if (curPicType == PicType.BINARY) {
+            menu.findItem(R.id.menu_op_basic).setEnabled(true);
+            menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
@@ -291,10 +318,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBinaryThresholdUpdate(int min, int max) {
-        updateCurPic(Binary.generate(originalPic, curWidth, curHeight, min, max), CurPicType.GRAY);
+        updateCurPic(Binary.generate(basePic, curWidth, curHeight, min, max), PicType.BINARY);
     }
 
-    private enum CurPicType {
+    @Override
+    public void separateChannel(int channelMask) {
+        int[] ret = Basic.channelSeparate(basePic, channelMask);
+        updateCurPic(ret);
+    }
+
+    @Override
+    public boolean isColor() {
+        return curPicType == PicType.COLOR;
+    }
+
+    private enum PicType {
         NONE,
         COLOR,
         GRAY,

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="superbiayang.imageprocessing.GrayscaleFragment">
+    tools:context="view.fragment.GrayscaleFragment">
 
     <Button
         android:id="@+id/grayscale_red_button"

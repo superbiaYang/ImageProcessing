@@ -23,6 +23,10 @@
     <item android:title="Operation">
         <menu>
             <item
+                android:id="@+id/menu_op_basic"
+                android:enabled="false"
+                android:title="Basic" />
+            <item
                 android:id="@+id/menu_op_grayscale"
                 android:enabled="false"
                 android:title="Grayscale" />
