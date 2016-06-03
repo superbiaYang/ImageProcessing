@@ -46,6 +46,10 @@
                 android:id="@+id/menu_op_binary_morphology"
                 android:enabled="false"
                 android:title="Binary Morphology" />
+            <item
+                android:id="@+id/menu_op_grayscale_morphology"
+                android:enabled="false"
+                android:title="Grayscale Morphology" />
         </menu>
     </item>
 

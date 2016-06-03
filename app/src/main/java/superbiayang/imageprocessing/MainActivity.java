@@ -28,12 +28,14 @@ import processor.Binary;
 import processor.Grayscale;
 import processor.OpenCV.BinaryMorphology;
 import processor.OpenCV.Filter;
+import processor.OpenCV.GrayscaleMorphology;
 import processor.OpenCV.Morphology;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
 import view.fragment.BinaryMorphologyFragment;
 import view.fragment.FilterFragment;
 import view.fragment.GrayscaleFragment;
+import view.fragment.GrayscaleMorphologyFragment;
 import view.fragment.MorphologyFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -43,7 +45,8 @@ public class MainActivity extends AppCompatActivity
         GrayscaleFragment.OnFragmentInteractionListener,
         BinaryFragment.OnFragmentInteractionListener,
         BasicFragment.OnFragmentInteractionListener,
-        BinaryMorphologyFragment.OnFragmentInteractionListener {
+        BinaryMorphologyFragment.OnFragmentInteractionListener,
+        GrayscaleMorphologyFragment.OnFragmentInteractionListener {
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
 
     static {
@@ -168,6 +171,9 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.menu_op_morphology:
                     fragment = MorphologyFragment.newInstance();
+                    break;
+                case R.id.menu_op_grayscale_morphology:
+                    fragment = GrayscaleMorphologyFragment.newInstance();
                     break;
             }
         }
@@ -312,6 +318,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
+            menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(false);
         } else if (curPicType == PicType.GRAY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(true);
@@ -319,6 +326,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
+            menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(true);
         } else if (curPicType == PicType.BINARY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(false);
@@ -326,6 +334,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(true);
+            menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(true);
         }
     }
 
@@ -371,6 +380,13 @@ public class MainActivity extends AppCompatActivity
         int[] dst = new int[curWidth * curHeight];
         BinaryMorphology.reconstruct(skeleton, dst, curWidth, curHeight);
         updateCurPic(dst, PicType.BINARY);
+    }
+
+    @Override
+    public void edge() {
+        int[] dst = new int[curWidth * curHeight];
+        GrayscaleMorphology.edge(basePic, dst, curWidth, curHeight);
+        updateCurPic(dst);
     }
 
     private enum PicType {
