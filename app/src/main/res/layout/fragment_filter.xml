@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="superbiayang.imageprocessing.FilterFragment">
+    tools:context="view.fragment.FilterFragment">
 
     <EditText
         android:id="@+id/median_blur_editText"
@@ -22,7 +22,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/median_blur_editText"
         android:layout_gravity="start|top"
-        android:onClick="onFilterButtonPressed"
         android:text="median" />
 
     <EditText
@@ -43,7 +42,6 @@
         android:layout_below="@+id/median_blur_editText"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal|top"
-        android:onClick="onFilterButtonPressed"
         android:text="mean" />
 
     <Button
@@ -53,7 +51,6 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/gaussian_blur_sigma_editText"
         android:layout_gravity="end|top"
-        android:onClick="onFilterButtonPressed"
         android:text="gaussian" />
 
     <EditText
@@ -72,7 +69,6 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/median_blur_button"
         android:layout_alignParentBottom="true"
-        android:onClick="onFilterButtonPressed"
         android:text="sobel" />
 
     <Button
@@ -81,7 +77,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/sobel_button"
         android:layout_centerHorizontal="true"
-        android:onClick="onFilterButtonPressed"
         android:text="prewitt" />
 
     <Button
@@ -90,7 +85,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/gaussian_blur_button"
-        android:onClick="onFilterButtonPressed"
         android:text="roberts" />
 
     <EditText
@@ -100,7 +94,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/gaussian_blur_size_editText"
         android:layout_below="@+id/gaussian_blur_size_editText"
-        android:text="0.0"
-        android:inputType="numberDecimal" />
+        android:inputType="numberDecimal"
+        android:text="0.0" />
 
 </RelativeLayout>

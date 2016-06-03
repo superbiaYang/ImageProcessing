@@ -1,4 +1,4 @@
-package superbiayang.imageprocessing;
+package view.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import superbiayang.imageprocessing.R;
 
 
 /**
@@ -17,7 +20,7 @@ import android.view.ViewGroup;
  * Use the {@link MorphologyFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MorphologyFragment extends Fragment {
+public class MorphologyFragment extends Fragment implements Button.OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     public MorphologyFragment() {
@@ -48,7 +51,19 @@ public class MorphologyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_morphology, container, false);
+        View view = inflater.inflate(R.layout.fragment_morphology, container, false);
+        int[] buttonId = {
+                R.id.morphology_erode_button,
+                R.id.morphology_dilate_button,
+                R.id.morphology_open_button,
+                R.id.morphology_close_button
+        };
+        for (int id : buttonId) {
+            Button button = (Button) view.findViewById(id);
+            button.setOnClickListener(this);
+        }
+
+        return view;
     }
 
     @Override
@@ -82,6 +97,20 @@ public class MorphologyFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.morphology_erode_button) {
+            mListener.erode();
+        } else if (id == R.id.morphology_dilate_button) {
+            mListener.dilate();
+        } else if (id == R.id.morphology_open_button) {
+            mListener.open();
+        } else if (id == R.id.morphology_close_button) {
+            mListener.close();
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -93,6 +122,12 @@ public class MorphologyFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onMorphologyButtonPressed(View view);
+        void erode();
+
+        void dilate();
+
+        void open();
+
+        void close();
     }
 }

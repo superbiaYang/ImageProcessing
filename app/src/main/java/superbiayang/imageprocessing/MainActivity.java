@@ -19,7 +19,6 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
@@ -33,7 +32,9 @@ import processor.OpenCV.Morphology;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
 import view.fragment.BinaryMorphologyFragment;
+import view.fragment.FilterFragment;
 import view.fragment.GrayscaleFragment;
+import view.fragment.MorphologyFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -125,16 +126,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.menu_op_filter) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.op_layout, new FilterFragment(), "fragment_filter");
-            fragmentTransaction.commit();
-        } else if (id == R.id.menu_op_morphology) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.op_layout, new MorphologyFragment(), "fragment_morphology");
-            fragmentTransaction.commit();
         } else {
             showProcessorFragment(id);
         }
@@ -171,6 +162,12 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.menu_op_binary_morphology:
                     fragment = BinaryMorphologyFragment.newInstance();
+                    break;
+                case R.id.menu_op_filter:
+                    fragment = FilterFragment.newInstance();
+                    break;
+                case R.id.menu_op_morphology:
+                    fragment = MorphologyFragment.newInstance();
                     break;
             }
         }
@@ -225,60 +222,72 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFilterButtonPressed(View view) {
-        if (curPic == null) {
-            return;
-        }
+    public void meanBlur(int size) {
         int[] dst = new int[curWidth * curHeight];
-        int id = view.getId();
-        if (id == R.id.mean_blur_button) {
-            EditText editText = (EditText) findViewById(R.id.mean_blur_editText);
-            int size = Integer.parseInt(editText.getText().toString());
-            Filter.meanBlur(curPic, dst, curWidth, curHeight, size);
-        } else if (id == R.id.median_blur_button) {
-            EditText editText = (EditText) findViewById(R.id.median_blur_editText);
-            int size = Integer.parseInt(editText.getText().toString());
-            if (size % 2 == 1) {
-                Filter.medianBlur(curPic, dst, curWidth, curHeight, size);
-            } else {
-                //TODO: show error
-            }
-        } else if (id == R.id.gaussian_blur_button) {
-            EditText editText = (EditText) findViewById(R.id.gaussian_blur_size_editText);
-            int size = Integer.parseInt(editText.getText().toString());
-            editText = (EditText) findViewById(R.id.gaussian_blur_sigma_editText);
-            double sigma = Double.parseDouble(editText.getText().toString());
-            if (size % 2 == 1) {
-                Filter.gaussianBlur(curPic, dst, curWidth, curHeight, size, sigma);
-            } else {
-                //TODO: show error
-            }
-        } else if (id == R.id.sobel_button) {
-            Filter.sobel(curPic, dst, curWidth, curHeight);
-        } else if (id == R.id.prewitt_button) {
-            Filter.prewitt(curPic, dst, curWidth, curHeight);
-        } else if (id == R.id.roberts_button) {
-            Filter.roberts(curPic, dst, curWidth, curHeight);
-        }
+        Filter.meanBlur(curPic, dst, curWidth, curHeight, size);
         updateCurPic(dst);
     }
 
     @Override
-    public void onMorphologyButtonPressed(View view) {
-        if (curPic == null) {
-            return;
-        }
+    public void medianBlur(int size) {
         int[] dst = new int[curWidth * curHeight];
-        int id = view.getId();
-        if (id == R.id.morphology_erode_button) {
-            Morphology.erode(curPic, dst, curWidth, curHeight);
-        } else if (id == R.id.morphology_dilate_button) {
-            Morphology.dilate(curPic, dst, curWidth, curHeight);
-        } else if (id == R.id.morphology_open_button) {
-            Morphology.open(curPic, dst, curWidth, curHeight);
-        } else if (id == R.id.morphology_close_button) {
-            Morphology.close(curPic, dst, curWidth, curHeight);
-        }
+        Filter.medianBlur(curPic, dst, curWidth, curHeight, size);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void gaussianBlur(int size, double sigma) {
+        int[] dst = new int[curWidth * curHeight];
+        Filter.gaussianBlur(curPic, dst, curWidth, curHeight, size, sigma);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void sobel() {
+        int[] dst = new int[curWidth * curHeight];
+        Filter.sobel(basePic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void prewitt() {
+        int[] dst = new int[curWidth * curHeight];
+        Filter.prewitt(basePic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void roberts() {
+        int[] dst = new int[curWidth * curHeight];
+        Filter.roberts(basePic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void erode() {
+        int[] dst = new int[curWidth * curHeight];
+        Morphology.erode(curPic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void dilate() {
+        int[] dst = new int[curWidth * curHeight];
+        Morphology.dilate(curPic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void open() {
+        int[] dst = new int[curWidth * curHeight];
+        Morphology.open(curPic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void close() {
+        int[] dst = new int[curWidth * curHeight];
+        Morphology.close(curPic, dst, curWidth, curHeight);
         updateCurPic(dst);
     }
 
