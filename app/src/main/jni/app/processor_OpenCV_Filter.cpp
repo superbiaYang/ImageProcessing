@@ -102,15 +102,15 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_Filter_roberts
 	{
 		for (int x = 0; x < width - 1; ++x)
 		{
-			int p00 = srcMat.at<uchar>(x, y);
-			int p01 = srcMat.at<uchar>(x, y + 1);
-			int p10 = srcMat.at<uchar>(x + 1, y);
-			int p11 = srcMat.at<uchar>(x + 1, y + 1);
+			int p00 = srcMat.at<uchar>(y, x);
+			int p01 = srcMat.at<uchar>(y + 1, x);
+			int p10 = srcMat.at<uchar>(y, x + 1);
+			int p11 = srcMat.at<uchar>(y + 1, x + 1);
 			int temp = abs(p00 - p11);
 			int temp1 = abs(p10 - p01);
 			temp = (temp > temp1 ? temp : temp1);
 			temp = (int)sqrt(float(temp * temp) + float(temp1 * temp1));
-			dstMat.at<uchar>(x, y) = temp;
+			dstMat.at<uchar>(y, x) = temp;
 		}
 	}
 	cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
