@@ -27,10 +27,12 @@ import java.io.FileNotFoundException;
 import processor.Basic;
 import processor.Binary;
 import processor.Grayscale;
+import processor.OpenCV.BinaryMorphology;
 import processor.OpenCV.Filter;
 import processor.OpenCV.Morphology;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
+import view.fragment.BinaryMorphologyFragment;
 import view.fragment.GrayscaleFragment;
 
 public class MainActivity extends AppCompatActivity
@@ -39,7 +41,8 @@ public class MainActivity extends AppCompatActivity
         MorphologyFragment.OnFragmentInteractionListener,
         GrayscaleFragment.OnFragmentInteractionListener,
         BinaryFragment.OnFragmentInteractionListener,
-        BasicFragment.OnFragmentInteractionListener {
+        BasicFragment.OnFragmentInteractionListener,
+        BinaryMorphologyFragment.OnFragmentInteractionListener {
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
 
     static {
@@ -165,6 +168,9 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.menu_op_binary:
                     fragment = BinaryFragment.newInstance();
+                    break;
+                case R.id.menu_op_binary_morphology:
+                    fragment = BinaryMorphologyFragment.newInstance();
                     break;
             }
         }
@@ -296,18 +302,21 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_grayscale).setEnabled(true);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
+            menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
         } else if (curPicType == PicType.GRAY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
+            menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
         } else if (curPicType == PicType.BINARY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
+            menu.findItem(R.id.menu_op_binary_morphology).setEnabled(true);
         }
     }
 
@@ -330,6 +339,29 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean isColor() {
         return curPicType == PicType.COLOR;
+    }
+
+    @Override
+    public void transformDistance() {
+        int[] dst = new int[curWidth * curHeight];
+        BinaryMorphology.distanceTransform(basePic, dst, curWidth, curHeight);
+        updateCurPic(dst, PicType.GRAY);
+    }
+
+    @Override
+    public int[] skeleton() {
+        int[] dst = new int[curWidth * curHeight];
+        int[] skeleton = new int[curWidth * curHeight];
+        BinaryMorphology.skeleton(basePic, dst, skeleton, curWidth, curHeight);
+        updateCurPic(dst, PicType.BINARY);
+        return skeleton;
+    }
+
+    @Override
+    public void reconstruct(int[] skeleton) {
+        int[] dst = new int[curWidth * curHeight];
+        BinaryMorphology.reconstruct(skeleton, dst, curWidth, curHeight);
+        updateCurPic(dst, PicType.BINARY);
     }
 
     private enum PicType {
