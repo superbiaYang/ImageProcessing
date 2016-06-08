@@ -21,7 +21,8 @@ import superbiayang.imageprocessing.R;
  * Use the {@link BasicFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BasicFragment extends Fragment implements View.OnClickListener {
+public class BasicFragment extends Fragment implements
+        View.OnClickListener {
     private OnFragmentInteractionListener mListener = null;
 
     public BasicFragment() {
@@ -54,7 +55,11 @@ public class BasicFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_basic, container, false);
-        int[] buttonId = {R.id.basic_red_button, R.id.basic_green_button, R.id.basic_blue_button};
+        int[] buttonId = {
+                R.id.basic_red_button,
+                R.id.basic_green_button,
+                R.id.basic_blue_button
+        };
         boolean isColor = mListener.isColor();
         for (int id : buttonId) {
             Button button = (Button) view.findViewById(id);
@@ -129,5 +134,11 @@ public class BasicFragment extends Fragment implements View.OnClickListener {
         void separateChannel(int channelMask);
 
         boolean isColor();
+
+        int getCurHeight();
+
+        int getCurWidth();
+
+        int getCurZoom();
     }
 }

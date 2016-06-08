@@ -6,34 +6,63 @@
 
     <Button
         android:id="@+id/basic_red_button"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/channel_separation_label"
-        android:text="red" />
+        android:text="R" />
 
     <Button
         android:id="@+id/basic_green_button"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/channel_separation_label"
         android:layout_toEndOf="@+id/basic_red_button"
-        android:text="green" />
+        android:text="G" />
 
     <Button
         android:id="@+id/basic_blue_button"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/basic_green_button"
         android:layout_toEndOf="@+id/basic_green_button"
-        android:text="blue" />
+        android:text="B" />
 
     <TextView
         android:id="@+id/channel_separation_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/color_textView"
         android:text="channel separation"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/size_info_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="width: -, height: -, zoom: -%" />
+
+    <TextView
+        android:id="@+id/coordinate_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/size_info_textView"
+        android:text="X: -, Y: -" />
+
+    <TextView
+        android:id="@+id/color_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/coordinate_textView"
+        android:text="R: -, G: -, B: -" />
+
 </RelativeLayout>

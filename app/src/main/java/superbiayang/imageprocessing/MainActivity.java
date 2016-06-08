@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,11 +16,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 
@@ -46,7 +50,8 @@ public class MainActivity extends AppCompatActivity
         BinaryFragment.OnFragmentInteractionListener,
         BasicFragment.OnFragmentInteractionListener,
         BinaryMorphologyFragment.OnFragmentInteractionListener,
-        GrayscaleMorphologyFragment.OnFragmentInteractionListener {
+        GrayscaleMorphologyFragment.OnFragmentInteractionListener,
+        View.OnTouchListener {
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
 
     static {
@@ -78,6 +83,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        ImageView view = (ImageView) findViewById(R.id.imageView);
+        view.setOnTouchListener(this);
     }
 
     @Override
@@ -144,18 +152,22 @@ public class MainActivity extends AppCompatActivity
         }
         basePic = curPic;
         basePicType = curPicType;
-        ImageView view = (ImageView) findViewById(R.id.base_imageView);
-        if (view != null) {
-            view.setImageBitmap(Bitmap.createBitmap(basePic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
+        ImageView baseView = (ImageView) findViewById(R.id.base_imageView);
+        if (baseView != null) {
+            baseView.setImageBitmap(Bitmap.createBitmap(basePic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
         }
         String tag = "fragment_" + id;
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
+
+        ImageView curView = (ImageView) findViewById(R.id.imageView);
+        curView.setOnTouchListener(null);
         if (fragment == null) {
             switch (id) {
                 case R.id.menu_op_basic:
                     fragment = BasicFragment.newInstance();
+                    curView.setOnTouchListener(this);
                     break;
                 case R.id.menu_op_grayscale:
                     fragment = GrayscaleFragment.newInstance();
@@ -360,6 +372,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public int getCurHeight() {
+        return curHeight;
+    }
+
+    @Override
+    public int getCurWidth() {
+        return curWidth;
+    }
+
+    @Override
+    public int getCurZoom() {
+        ImageView view = (ImageView) findViewById(R.id.imageView);
+        Log.i("width", "" + view.getWidth());
+        return view.getWidth() * 100 / curWidth;
+    }
+
+    @Override
     public void transformDistance() {
         int[] dst = new int[curWidth * curHeight];
         BinaryMorphology.distanceTransform(basePic, dst, curWidth, curHeight);
@@ -387,6 +416,63 @@ public class MainActivity extends AppCompatActivity
         int[] dst = new int[curWidth * curHeight];
         GrayscaleMorphology.edge(basePic, dst, curWidth, curHeight);
         updateCurPic(dst);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getX() < 0 || event.getX() >= v.getWidth() ||
+                event.getY() < 0 || event.getY() >= v.getHeight()) {
+            String info = "width: -, height: -, zoom: -%";
+            TextView text = (TextView) findViewById(R.id.size_info_textView);
+            if (text != null) {
+                text.setText(info);
+            }
+
+            info = "X: -, Y: -";
+            text = (TextView) findViewById(R.id.coordinate_textView);
+            if (text != null) {
+                text.setText(info);
+            }
+
+            info = "R: -, G: -, B: -";
+            text = (TextView) findViewById(R.id.color_textView);
+            if (text != null) {
+                text.setText(info);
+            }
+
+            return true;
+        }
+
+        int real_x = (int) (event.getX() * curWidth / v.getWidth());
+        int real_y = (int) (event.getY() * curHeight / v.getHeight());
+
+        int pixel = curPic[real_x + real_y * curWidth];
+        int r = Color.red(pixel);
+        int g = Color.green(pixel);
+        int b = Color.blue(pixel);
+
+
+        String info = "width: " + v.getWidth()
+                + ", height: " + v.getHeight()
+                + ", zoom: " + v.getWidth() * 100 / curWidth + "%";
+        TextView text = (TextView) findViewById(R.id.size_info_textView);
+        if (text != null) {
+            text.setText(info);
+        }
+
+        info = "X: " + event.getX() + ", Y: " + event.getY();
+        text = (TextView) findViewById(R.id.coordinate_textView);
+        if (text != null) {
+            text.setText(info);
+        }
+
+        info = "R: " + r + ", G: " + g + ", B: " + b;
+        text = (TextView) findViewById(R.id.color_textView);
+        if (text != null) {
+            text.setText(info);
+        }
+
+        return true;
     }
 
     private enum PicType {
