@@ -110,3 +110,47 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
     env->ReleaseIntArrayElements(dstArray, dst, 0);
     env->ReleaseIntArrayElements(skeletonArray, skeleton, JNI_ABORT);
 }
+
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilation
+(JNIEnv *env, jclass, jintArray srcArray, jintArray maskArray, jintArray dstArray, jint width, jint height)
+{
+    jboolean copy = false;
+    jint* src = env->GetIntArrayElements(srcArray, &copy);
+    jint* dst = env->GetIntArrayElements(dstArray, &copy);
+    jint* mask = env->GetIntArrayElements(maskArray, &copy);
+    Mat srcMat(height, width, CV_8UC4, src);
+    cvtColor(srcMat, srcMat, CV_RGB2GRAY);
+    Mat maskMat(height, width, CV_8UC4, mask);
+    cvtColor(maskMat, maskMat, CV_RGB2GRAY);
+
+    Mat dilateMat = srcMat.clone();
+    Mat dstMat = srcMat.clone();
+    Mat resultMat = srcMat.clone();
+
+    bool flag = true;
+    do
+    {
+        dilate(resultMat, dilateMat, ELEMENT);
+        dilateMat.copyTo(resultMat, maskMat);
+
+        flag = false;
+        uchar* ptr = dstMat.ptr(0);
+        uchar* resultPtr = resultMat.ptr(0);
+        for (int i = 0; i < width * height; ++i)
+        {
+            if (*ptr != *resultPtr)
+            {
+                flag = true;
+                break;
+            }
+            ++ptr;
+            ++resultPtr;
+        }
+        dstMat = resultMat.clone();
+    } while(flag);
+    cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
+    memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
+    env->ReleaseIntArrayElements(dstArray, dst, 0);
+    env->ReleaseIntArrayElements(srcArray, src, JNI_ABORT);
+    env->ReleaseIntArrayElements(maskArray, mask, JNI_ABORT);
+}

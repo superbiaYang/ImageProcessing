@@ -15,6 +15,22 @@ extern "C" {
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_edge
   (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
 
+/*
+ * Class:     processor_OpenCV_GrayscaleMorphology
+ * Method:    OBR
+ * Signature: ([I[IIII)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_OBR
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint);
+
+/*
+ * Class:     processor_OpenCV_GrayscaleMorphology
+ * Method:    CBR
+ * Signature: ([I[IIII)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_CBR
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

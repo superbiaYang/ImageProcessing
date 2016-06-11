@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 
 import processor.Basic;
 import processor.Binary;
+import processor.Contrast;
 import processor.Grayscale;
 import processor.OpenCV.BinaryMorphology;
 import processor.OpenCV.Filter;
@@ -37,6 +38,7 @@ import processor.OpenCV.Morphology;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
 import view.fragment.BinaryMorphologyFragment;
+import view.fragment.ContrastFragment;
 import view.fragment.FilterFragment;
 import view.fragment.GrayscaleFragment;
 import view.fragment.GrayscaleMorphologyFragment;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity
         BasicFragment.OnFragmentInteractionListener,
         BinaryMorphologyFragment.OnFragmentInteractionListener,
         GrayscaleMorphologyFragment.OnFragmentInteractionListener,
+        ContrastFragment.OnFragmentInteractionListener,
         View.OnTouchListener {
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
 
@@ -126,17 +129,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         basePic = null;
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_gallery) {
             // Handle the camera action
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
             openAlbumIntent.setType("image/*");
             startActivityForResult(openAlbumIntent, 0);
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
         } else {
             showProcessorFragment(id);
         }
@@ -168,6 +165,9 @@ public class MainActivity extends AppCompatActivity
                 case R.id.menu_op_basic:
                     fragment = BasicFragment.newInstance();
                     curView.setOnTouchListener(this);
+                    break;
+                case R.id.menu_op_contrast:
+                    fragment = ContrastFragment.newInstance();
                     break;
                 case R.id.menu_op_grayscale:
                     fragment = GrayscaleFragment.newInstance();
@@ -289,6 +289,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void conditionalDilate() {
+        int[] dst = new int[curWidth * curHeight];
+        BinaryMorphology.conditionalDilation(curPic, basePic, dst, curWidth, curHeight);
+        updateCurPic(dst);
+    }
+
+    @Override
     public void dilate() {
         int[] dst = new int[curWidth * curHeight];
         Morphology.dilate(curPic, dst, curWidth, curHeight);
@@ -310,14 +317,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void grayscale(Grayscale.GrayType type) {
+    public Bitmap grayscale(Grayscale.GrayType type) {
         Grayscale.Return ret = Grayscale.generate(basePic, curWidth, curHeight, type);
         updateCurPic(ret.pixels, PicType.GRAY);
         histogram = ret.histogram;
-        ImageView histogram = (ImageView) findViewById(R.id.grayscale_histogram_imageView);
-        if (histogram != null) {
-            histogram.setImageBitmap(Grayscale.Histogram(ret.histogram));
-        }
+        return Grayscale.Histogram(ret.histogram);
+    }
+
+    @Override
+    public Bitmap equalize() {
+        Grayscale.Return ret = Grayscale.equalize(curPic, curWidth, curHeight, histogram);
+        updateCurPic(ret.pixels);
+        histogram = ret.histogram;
+        return Grayscale.Histogram(ret.histogram);
     }
 
     public void updateMenu() {
@@ -325,6 +337,7 @@ public class MainActivity extends AppCompatActivity
         Menu menu = navigationView.getMenu();
         if (curPicType == PicType.COLOR) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
+            menu.findItem(R.id.menu_op_contrast).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(true);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
@@ -333,6 +346,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(false);
         } else if (curPicType == PicType.GRAY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
+            menu.findItem(R.id.menu_op_contrast).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
@@ -341,6 +355,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(true);
         } else if (curPicType == PicType.BINARY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
+            menu.findItem(R.id.menu_op_contrast).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
@@ -419,6 +434,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void OBR() {
+        int[] dst = new int[curWidth * curHeight];
+        GrayscaleMorphology.OBR(basePic, dst, curWidth, curHeight, 5);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void CBR() {
+        int[] dst = new int[curWidth * curHeight];
+        GrayscaleMorphology.CBR(basePic, dst, curWidth, curHeight, 5);
+        updateCurPic(dst);
+    }
+
+    @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getX() < 0 || event.getX() >= v.getWidth() ||
                 event.getY() < 0 || event.getY() >= v.getHeight()) {
@@ -473,6 +502,27 @@ public class MainActivity extends AppCompatActivity
         }
 
         return true;
+    }
+
+    @Override
+    public void linearContrast(double k, double b) {
+        int[] dst = new int[curWidth * curHeight];
+        Contrast.linear(basePic, dst, k, b);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void logContrast(double a, double b, double c) {
+        int[] dst = new int[curWidth * curHeight];
+        Contrast.log(basePic, dst, a, b, c);
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void powContrast(double a, double b, double c) {
+        int[] dst = new int[curWidth * curHeight];
+        Contrast.pow(basePic, dst, a, b, c);
+        updateCurPic(dst);
     }
 
     private enum PicType {

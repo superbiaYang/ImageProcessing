@@ -56,7 +56,9 @@ public class BinaryMorphologyFragment extends Fragment implements View.OnClickLi
         int[] buttonId = {
                 R.id.distance_button,
                 R.id.skeleton_button,
-                R.id.reconstruct_button
+                R.id.reconstruct_button,
+                R.id.binary_erode_button,
+                R.id.binary_conditional_dilate_button
         };
         for (int id : buttonId) {
             Button button = (Button) view.findViewById(id);
@@ -115,6 +117,12 @@ public class BinaryMorphologyFragment extends Fragment implements View.OnClickLi
             case R.id.reconstruct_button:
                 mListener.reconstruct(mSkeleton);
                 break;
+            case R.id.binary_erode_button:
+                mListener.erode();
+                break;
+            case R.id.binary_conditional_dilate_button:
+                mListener.conditionalDilate();
+                break;
         }
     }
 
@@ -134,5 +142,9 @@ public class BinaryMorphologyFragment extends Fragment implements View.OnClickLi
         int[] skeleton();
 
         void reconstruct(int[] skeleton);
+
+        void erode();
+
+        void conditionalDilate();
     }
 }

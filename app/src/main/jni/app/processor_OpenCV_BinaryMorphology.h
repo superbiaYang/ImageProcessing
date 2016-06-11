@@ -31,6 +31,14 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_skeleton
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
   (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
 
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    conditionalDilation
+ * Signature: ([I[I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilation
+  (JNIEnv *, jclass, jintArray, jintArray, jintArray, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

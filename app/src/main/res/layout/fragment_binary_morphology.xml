@@ -25,4 +25,18 @@
         android:layout_gravity="left|bottom"
         android:enabled="false"
         android:text="reconstruct" />
+
+    <Button
+        android:id="@+id/binary_erode_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:text="erode" />
+
+    <Button
+        android:id="@+id/binary_conditional_dilate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:text="conditionalDilate" />
 </FrameLayout>

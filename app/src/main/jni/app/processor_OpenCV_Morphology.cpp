@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
-#define ELEMENT getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1))
+    #define ELEMENT getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1))
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_Morphology_erode
 (JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)

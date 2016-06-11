@@ -9,4 +9,8 @@ public class GrayscaleMorphology {
     }
 
     public static native void edge(int[] src, int[] dst, int width, int height);
+
+    public static native void OBR(int[] src, int[] dst, int width, int height, int n);
+
+    public static native void CBR(int[] src, int[] dst, int width, int height, int n);
 }

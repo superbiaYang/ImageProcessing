@@ -11,4 +11,20 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:text="edge" />
+
+    <Button
+        android:id="@+id/obr_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/edge_button"
+        android:text="OBR" />
+
+    <Button
+        android:id="@+id/cbr_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/obr_button"
+        android:layout_below="@+id/obr_button"
+        android:text="CBR" />
 </RelativeLayout>

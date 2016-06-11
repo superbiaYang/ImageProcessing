@@ -14,4 +14,6 @@ public class BinaryMorphology {
 
     public static native void reconstruct(int[] skeleton, int[] dst, int width, int height);
 
+    public static native void conditionalDilation(int[] src, int[] mask, int[] dst, int width, int height);
+
 }

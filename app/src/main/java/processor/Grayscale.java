@@ -55,6 +55,25 @@ public class Grayscale {
         return ret;
     }
 
+    public static Return equalize(int[] src, int width, int height, int[] histogram) {
+        Return ret = new Return();
+        ret.histogram = new int[COLOR_THRESHOLD];
+        ret.pixels = new int[width * height];
+
+        int[] map = new int[COLOR_THRESHOLD];
+        for (int i = 0, sum = 0; i < COLOR_THRESHOLD; i++) {
+            sum += histogram[i];
+            map[i] = 255 * sum / src.length;
+        }
+        for (int i = 0; i < src.length; i++) {
+            int gray = Color.red(src[i]);   //The source should be a gray scale picture so red is equal to gray
+            gray = map[gray];
+            ret.histogram[gray]++;
+            ret.pixels[i] = Color.rgb(gray, gray, gray);
+        }
+        return ret;
+    }
+
     public static Bitmap Histogram(int[] histogram) {
         int[] pixels = new int[COLOR_THRESHOLD * HISTOGRAM_HEIGHT];
         int max = 0;

@@ -1,0 +1,200 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="view.fragment.ContrastFragment">
+
+
+    <EditText
+        android:id="@+id/linear_k_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/linear_k"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <TextView
+        android:id="@+id/linear_k"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/linear_k_editText"
+        android:layout_alignBottom="@+id/linear_k_editText"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/contrast_radioGroup"
+        android:text="k=" />
+
+    <TextView
+        android:id="@+id/linear_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/linear_k_editText"
+        android:layout_alignBottom="@+id/linear_k_editText"
+        android:layout_toEndOf="@+id/linear_k_editText"
+        android:text="b=" />
+
+    <EditText
+        android:id="@+id/linear_b_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/linear_b"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <Button
+        android:id="@+id/contrast_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/contrast_radioGroup"
+        android:text="process" />
+
+    <RadioGroup
+        android:id="@+id/contrast_radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="left">
+
+        <RadioButton
+            android:id="@+id/linear_radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:checked="true"
+            android:text="Linear:\nY = k*X+b"
+            android:textSize="10dp" />
+
+        <RadioButton
+            android:id="@+id/logarithm_radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linear_k"
+            android:layout_marginTop="10dp"
+            android:checked="false"
+            android:text="Logarithm:\nY=a*(log(X)+1)/logb+c"
+            android:textSize="10dp" />
+
+        <RadioButton
+            android:id="@+id/power_radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:checked="false"
+            android:text="Power:\nY=b^(c*X+a)-1"
+            android:textSize="10dp" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/log_a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/log_a_editText"
+        android:layout_alignBottom="@+id/log_a_editText"
+        android:layout_toStartOf="@+id/linear_k_editText"
+        android:text="a=" />
+
+    <EditText
+        android:id="@+id/log_a_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linear_k_editText"
+        android:layout_toEndOf="@+id/log_a"
+        android:enabled="false"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <TextView
+        android:id="@+id/log_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/log_a"
+        android:layout_alignBottom="@+id/log_a"
+        android:layout_toEndOf="@+id/log_a_editText"
+        android:text="b=" />
+
+    <EditText
+        android:id="@+id/log_b_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/log_a_editText"
+        android:layout_toEndOf="@+id/log_b"
+        android:enabled="false"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <TextView
+        android:id="@+id/log_c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/log_c_editText"
+        android:layout_alignBottom="@+id/log_c_editText"
+        android:layout_toEndOf="@+id/log_b_editText"
+        android:text="c=" />
+
+    <EditText
+        android:id="@+id/log_c_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/log_b_editText"
+        android:layout_toEndOf="@+id/log_c"
+        android:enabled="false"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <TextView
+        android:id="@+id/pow_a"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pow_a_editText"
+        android:layout_alignBottom="@+id/pow_a_editText"
+        android:layout_alignStart="@+id/log_a"
+        android:text="a=" />
+
+    <EditText
+        android:id="@+id/pow_a_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/log_a_editText"
+        android:layout_toEndOf="@+id/pow_a"
+        android:enabled="false"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <TextView
+        android:id="@+id/pow_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pow_a_editText"
+        android:layout_alignBottom="@+id/pow_a_editText"
+        android:layout_toEndOf="@+id/pow_a_editText"
+        android:text="b=" />
+
+    <EditText
+        android:id="@+id/pow_b_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/log_b_editText"
+        android:layout_toEndOf="@+id/pow_b"
+        android:enabled="false"
+        android:inputType="numberSigned|numberDecimal" />
+
+    <TextView
+        android:id="@+id/pow_c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pow_b_editText"
+        android:layout_alignBottom="@+id/pow_b_editText"
+        android:layout_toEndOf="@+id/pow_b_editText"
+        android:text="c=" />
+
+    <EditText
+        android:id="@+id/pow_c_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/log_c_editText"
+        android:layout_toEndOf="@+id/pow_c"
+        android:enabled="false"
+        android:inputType="numberSigned|numberDecimal" />
+
+</RelativeLayout>

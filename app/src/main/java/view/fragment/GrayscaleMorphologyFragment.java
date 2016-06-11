@@ -53,7 +53,9 @@ public class GrayscaleMorphologyFragment extends Fragment implements View.OnClic
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_grayscale_morphology, container, false);
         int[] buttonId = {
-                R.id.edge_button
+                R.id.edge_button,
+                R.id.obr_button,
+                R.id.cbr_button
         };
         for (int id : buttonId) {
             Button button = (Button) view.findViewById(id);
@@ -99,6 +101,10 @@ public class GrayscaleMorphologyFragment extends Fragment implements View.OnClic
         int id = v.getId();
         if (id == R.id.edge_button) {
             mListener.edge();
+        } else if (id == R.id.obr_button) {
+            mListener.OBR();
+        } else if (id == R.id.cbr_button) {
+            mListener.CBR();
         }
     }
 
@@ -114,5 +120,9 @@ public class GrayscaleMorphologyFragment extends Fragment implements View.OnClic
      */
     public interface OnFragmentInteractionListener {
         void edge();
+
+        void OBR();
+
+        void CBR();
     }
 }

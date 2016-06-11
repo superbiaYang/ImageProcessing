@@ -3,11 +3,13 @@ package view.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import processor.Grayscale;
 import superbiayang.imageprocessing.R;
@@ -60,6 +62,7 @@ public class GrayscaleFragment extends Fragment implements View.OnClickListener 
                 R.id.grayscale_avg_button,
                 R.id.grayscale_opencv_button,
                 R.id.grayscale_bio_button,
+                R.id.equalization_button
         };
         for (int id : buttonId) {
             Button button = (Button) view.findViewById(id);
@@ -103,18 +106,25 @@ public class GrayscaleFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        Bitmap histogram = null;
         if (id == R.id.grayscale_red_button) {
-            mListener.grayscale(Grayscale.GrayType.RED);
+            histogram = mListener.grayscale(Grayscale.GrayType.RED);
         } else if (id == R.id.grayscale_green_button) {
-            mListener.grayscale(Grayscale.GrayType.GREEN);
+            histogram = mListener.grayscale(Grayscale.GrayType.GREEN);
         } else if (id == R.id.grayscale_blue_button) {
-            mListener.grayscale(Grayscale.GrayType.BLUE);
+            histogram = mListener.grayscale(Grayscale.GrayType.BLUE);
         } else if (id == R.id.grayscale_avg_button) {
-            mListener.grayscale(Grayscale.GrayType.AVG);
+            histogram = mListener.grayscale(Grayscale.GrayType.AVG);
         } else if (id == R.id.grayscale_opencv_button) {
-            mListener.grayscale(Grayscale.GrayType.OPENCV);
+            histogram = mListener.grayscale(Grayscale.GrayType.OPENCV);
         } else if (id == R.id.grayscale_bio_button) {
-            mListener.grayscale(Grayscale.GrayType.BIO);
+            histogram = mListener.grayscale(Grayscale.GrayType.BIO);
+        } else if (id == R.id.equalization_button) {
+            histogram = mListener.equalize();
+        }
+        if (histogram != null) {
+            ((ImageView) getView().findViewById(R.id.grayscale_histogram_imageView)).setImageBitmap(histogram);
+            getView().findViewById(R.id.equalization_button).setVisibility(View.VISIBLE);
         }
     }
 
@@ -129,6 +139,8 @@ public class GrayscaleFragment extends Fragment implements View.OnClickListener 
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void grayscale(Grayscale.GrayType type);
+        Bitmap grayscale(Grayscale.GrayType type);
+
+        Bitmap equalize();
     }
 }
