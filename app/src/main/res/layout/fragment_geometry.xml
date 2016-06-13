@@ -1,0 +1,104 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="view.fragment.GeometryFragment">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/geo_width"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/geo_width_editText"
+            android:layout_alignBottom="@+id/geo_width_editText"
+            android:layout_alignParentStart="true"
+            android:text="width:" />
+
+        <EditText
+            android:id="@+id/geo_width_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/geo_width"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/geo_height_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/geo_width_editText"
+            android:layout_toEndOf="@+id/geo_height"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/geo_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/geo_height_editText"
+            android:layout_alignBottom="@+id/geo_height_editText"
+            android:layout_alignParentStart="true"
+            android:text="height:" />
+
+        <Button
+            android:id="@+id/resize_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/geo_height_editText"
+            android:text="resize" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/relativeLayout">
+
+        <view.component.CircularSeekBar
+            android:id="@+id/circle_seekBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            app:circle_progress_color="@color/colorPrimaryDark"
+            app:max="360" />
+
+        <EditText
+            android:id="@+id/circle_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:inputType="number" />
+    </RelativeLayout>
+
+    <RadioGroup
+        android:id="@+id/geometry_radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/relativeLayout2">
+
+        <RadioButton
+            android:id="@+id/nearest_neighbor_radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Nearest Neighbor" />
+
+        <RadioButton
+            android:id="@+id/bilinear_interpolation_radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Bilinear Interpolation" />
+    </RadioGroup>
+
+</RelativeLayout>

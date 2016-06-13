@@ -19,6 +19,10 @@
                 android:enabled="false"
                 android:title="Contrast" />
             <item
+                android:id="@+id/menu_op_geometry"
+                android:enabled="false"
+                android:title="Geometry" />
+            <item
                 android:id="@+id/menu_op_grayscale"
                 android:enabled="false"
                 android:title="Grayscale" />

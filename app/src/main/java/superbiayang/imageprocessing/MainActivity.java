@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import processor.Basic;
 import processor.Binary;
 import processor.Contrast;
+import processor.Geometry;
 import processor.Grayscale;
 import processor.OpenCV.BinaryMorphology;
 import processor.OpenCV.Filter;
@@ -40,6 +41,7 @@ import view.fragment.BinaryFragment;
 import view.fragment.BinaryMorphologyFragment;
 import view.fragment.ContrastFragment;
 import view.fragment.FilterFragment;
+import view.fragment.GeometryFragment;
 import view.fragment.GrayscaleFragment;
 import view.fragment.GrayscaleMorphologyFragment;
 import view.fragment.MorphologyFragment;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity
         BinaryMorphologyFragment.OnFragmentInteractionListener,
         GrayscaleMorphologyFragment.OnFragmentInteractionListener,
         ContrastFragment.OnFragmentInteractionListener,
+        GeometryFragment.OnFragmentInteractionListener,
         View.OnTouchListener {
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
 
@@ -61,14 +64,9 @@ public class MainActivity extends AppCompatActivity
         MenuIdFragmentTag.append(R.id.menu_op_basic, "BASIC_FRAGMENT");
     }
 
-    private int[] curPic = null;
-    private int curWidth = 0;
-    private int curHeight = 0;
-    private int[] basePic = null;
-    private PicType basePicType = PicType.NONE;
+    private PicInfo curPic = null;
+    private PicInfo basePic = null;
     private int[] histogram = null;
-    private PicType curPicType = PicType.NONE;
-    private PicManager picManager = new PicManager();
     private int curFragment = -1;
 
     @Override
@@ -89,6 +87,8 @@ public class MainActivity extends AppCompatActivity
 
         ImageView view = (ImageView) findViewById(R.id.imageView);
         view.setOnTouchListener(this);
+
+        basePic = new PicInfo();
     }
 
     @Override
@@ -147,11 +147,15 @@ public class MainActivity extends AppCompatActivity
         if (id == curFragment) {
             return;
         }
-        basePic = curPic;
-        basePicType = curPicType;
+        basePic.copy(curPic);
         ImageView baseView = (ImageView) findViewById(R.id.base_imageView);
         if (baseView != null) {
-            baseView.setImageBitmap(Bitmap.createBitmap(basePic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
+            baseView.setImageBitmap(
+                    Bitmap.createBitmap(
+                            basePic.getPixels(), basePic.getWidth(),
+                            basePic.getHeight(), Bitmap.Config.ARGB_8888
+                    )
+            );
         }
         String tag = "fragment_" + id;
         FragmentManager fragmentManager = getFragmentManager();
@@ -187,6 +191,9 @@ public class MainActivity extends AppCompatActivity
                 case R.id.menu_op_grayscale_morphology:
                     fragment = GrayscaleMorphologyFragment.newInstance();
                     break;
+                case R.id.menu_op_geometry:
+                    fragment = GeometryFragment.newInstance();
+                    break;
             }
         }
         fragmentTransaction.replace(R.id.op_layout, fragment, tag);
@@ -202,8 +209,7 @@ public class MainActivity extends AppCompatActivity
                 Uri uri = data.getData();
                 try {
                     ContentResolver cr = this.getContentResolver();
-                    picManager.init(BitmapFactory.decodeStream(cr.openInputStream(uri)));
-                    updateCurPic(picManager.getColorPixels(), picManager.getWidth(), picManager.getHeight(), PicType.COLOR);
+                    initCurPic(BitmapFactory.decodeStream(cr.openInputStream(uri)));
                     showProcessorFragment(R.id.menu_op_basic);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -213,120 +219,140 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
+    }
 
+    private void initCurPic(Bitmap bitmap) {
+        curPic = new PicInfo(bitmap);
+        updateMenu();
+        showCurPic();
+    }
+
+    private void showCurPic() {
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        assert imageView != null;
+        imageView.setImageBitmap(
+                Bitmap.createBitmap(
+                        curPic.getPixels(), curPic.getWidth(),
+                        curPic.getHeight(), Bitmap.Config.ARGB_8888
+                )
+        );
     }
 
     private void updateCurPic(int[] pixels) {
-        curPic = pixels;
-        ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setImageBitmap(Bitmap.createBitmap(curPic, curWidth, curHeight, Bitmap.Config.ARGB_8888));
+        curPic.setPixels(pixels);
+        showCurPic();
     }
 
-    private void updateCurPic(int[] pixels, PicType type) {
+    private void updateCurPic(int[] pixels, PicInfo.PicType type) {
+        curPic.setPicType(type);
         updateCurPic(pixels);
-
-        curPicType = type;
         updateMenu();
     }
 
-    private void updateCurPic(int[] pixels, int width, int height, PicType type) {
-        curWidth = width;
-        curHeight = height;
+    private void updateCurPic(int[] pixels, int width, int height, PicInfo.PicType type) {
+        curPic.setWidth(width);
+        curPic.setHeight(height);
         updateCurPic(pixels, type);
     }
 
     public void onBasePicClicked(View view) {
-        updateCurPic(basePic, basePicType);
+        curPic.copy(basePic);
+        showCurPic();
+        updateMenu();
     }
 
     @Override
     public void meanBlur(int size) {
-        int[] dst = new int[curWidth * curHeight];
-        Filter.meanBlur(curPic, dst, curWidth, curHeight, size);
+        int[] dst = new int[curPic.getPixelsNum()];
+        Filter.meanBlur(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), size);
         updateCurPic(dst);
     }
 
     @Override
     public void medianBlur(int size) {
-        int[] dst = new int[curWidth * curHeight];
-        Filter.medianBlur(curPic, dst, curWidth, curHeight, size);
+        int[] dst = new int[curPic.getPixelsNum()];
+        Filter.medianBlur(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), size);
         updateCurPic(dst);
     }
 
     @Override
     public void gaussianBlur(int size, double sigma) {
-        int[] dst = new int[curWidth * curHeight];
-        Filter.gaussianBlur(curPic, dst, curWidth, curHeight, size, sigma);
+        int[] dst = new int[curPic.getPixelsNum()];
+        Filter.gaussianBlur(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), size, sigma);
         updateCurPic(dst);
     }
 
     @Override
     public void sobel() {
-        int[] dst = new int[curWidth * curHeight];
-        Filter.sobel(basePic, dst, curWidth, curHeight);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Filter.sobel(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void prewitt() {
-        int[] dst = new int[curWidth * curHeight];
-        Filter.prewitt(basePic, dst, curWidth, curHeight);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Filter.prewitt(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void roberts() {
-        int[] dst = new int[curWidth * curHeight];
-        Filter.roberts(basePic, dst, curWidth, curHeight);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Filter.roberts(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void erode() {
-        int[] dst = new int[curWidth * curHeight];
-        Morphology.erode(curPic, dst, curWidth, curHeight);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Morphology.erode(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void conditionalDilate() {
-        int[] dst = new int[curWidth * curHeight];
-        BinaryMorphology.conditionalDilation(curPic, basePic, dst, curWidth, curHeight);
+        int[] dst = new int[curPic.getPixelsNum()];
+        BinaryMorphology.conditionalDilation(
+                curPic.getPixels(), basePic.getPixels(),
+                dst, curPic.getWidth(), curPic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void dilate() {
-        int[] dst = new int[curWidth * curHeight];
-        Morphology.dilate(curPic, dst, curWidth, curHeight);
+        int[] dst = new int[curPic.getPixelsNum()];
+        Morphology.dilate(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void open() {
-        int[] dst = new int[curWidth * curHeight];
-        Morphology.open(curPic, dst, curWidth, curHeight);
+        int[] dst = new int[curPic.getPixelsNum()];
+        Morphology.open(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void close() {
-        int[] dst = new int[curWidth * curHeight];
-        Morphology.close(curPic, dst, curWidth, curHeight);
+        int[] dst = new int[curPic.getPixelsNum()];
+        Morphology.close(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public Bitmap grayscale(Grayscale.GrayType type) {
-        Grayscale.Return ret = Grayscale.generate(basePic, curWidth, curHeight, type);
-        updateCurPic(ret.pixels, PicType.GRAY);
+        Grayscale.Return ret = Grayscale.generate(
+                basePic.getPixels(), basePic.getWidth(), basePic.getHeight(), type);
+        updateCurPic(ret.pixels, PicInfo.PicType.GRAY);
         histogram = ret.histogram;
         return Grayscale.Histogram(ret.histogram);
     }
 
     @Override
     public Bitmap equalize() {
-        Grayscale.Return ret = Grayscale.equalize(curPic, curWidth, curHeight, histogram);
+        Grayscale.Return ret = Grayscale.equalize(
+                curPic.getPixels(), curPic.getWidth(), curPic.getHeight(), histogram);
         updateCurPic(ret.pixels);
         histogram = ret.histogram;
         return Grayscale.Histogram(ret.histogram);
@@ -335,8 +361,9 @@ public class MainActivity extends AppCompatActivity
     public void updateMenu() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
-        if (curPicType == PicType.COLOR) {
+        if (curPic.getPicType() == PicInfo.PicType.COLOR) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
+            menu.findItem(R.id.menu_op_geometry).setEnabled(true);
             menu.findItem(R.id.menu_op_contrast).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(true);
@@ -344,18 +371,20 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(false);
-        } else if (curPicType == PicType.GRAY) {
+        } else if (curPic.getPicType() == PicInfo.PicType.GRAY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_contrast).setEnabled(true);
+            menu.findItem(R.id.menu_op_geometry).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(true);
-        } else if (curPicType == PicType.BINARY) {
+        } else if (curPic.getPicType() == PicInfo.PicType.BINARY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_contrast).setEnabled(true);
+            menu.findItem(R.id.menu_op_geometry).setEnabled(true);
             menu.findItem(R.id.menu_op_binary).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale).setEnabled(false);
             menu.findItem(R.id.menu_op_filter).setEnabled(true);
@@ -372,78 +401,79 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBinaryThresholdUpdate(int min, int max) {
-        updateCurPic(Binary.generate(basePic, curWidth, curHeight, min, max), PicType.BINARY);
+        updateCurPic(Binary.generate(
+                basePic.getPixels(), basePic.getWidth(), curPic.getHeight(), min, max), PicInfo.PicType.BINARY);
     }
 
     @Override
     public void separateChannel(int channelMask) {
-        int[] ret = Basic.channelSeparate(basePic, channelMask);
+        int[] ret = Basic.channelSeparate(basePic.getPixels(), channelMask);
         updateCurPic(ret);
     }
 
     @Override
     public boolean isColor() {
-        return curPicType == PicType.COLOR;
+        return curPic.getPicType() == PicInfo.PicType.COLOR;
     }
 
     @Override
     public int getCurHeight() {
-        return curHeight;
+        return curPic.getHeight();
     }
 
     @Override
     public int getCurWidth() {
-        return curWidth;
+        return curPic.getWidth();
     }
 
     @Override
     public int getCurZoom() {
         ImageView view = (ImageView) findViewById(R.id.imageView);
         Log.i("width", "" + view.getWidth());
-        return view.getWidth() * 100 / curWidth;
+        return view.getWidth() * 100 / curPic.getWidth();
     }
 
     @Override
     public void transformDistance() {
-        int[] dst = new int[curWidth * curHeight];
-        BinaryMorphology.distanceTransform(basePic, dst, curWidth, curHeight);
-        updateCurPic(dst, PicType.GRAY);
+        int[] dst = new int[curPic.getPixelsNum()];
+        BinaryMorphology.distanceTransform(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst, PicInfo.PicType.GRAY);
     }
 
     @Override
     public int[] skeleton() {
-        int[] dst = new int[curWidth * curHeight];
-        int[] skeleton = new int[curWidth * curHeight];
-        BinaryMorphology.skeleton(basePic, dst, skeleton, curWidth, curHeight);
-        updateCurPic(dst, PicType.BINARY);
+        int[] dst = new int[basePic.getPixelsNum()];
+        int[] skeleton = new int[basePic.getPixelsNum()];
+        BinaryMorphology.skeleton(basePic.getPixels(), dst, skeleton, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst, PicInfo.PicType.BINARY);
         return skeleton;
     }
 
     @Override
     public void reconstruct(int[] skeleton) {
-        int[] dst = new int[curWidth * curHeight];
-        BinaryMorphology.reconstruct(skeleton, dst, curWidth, curHeight);
-        updateCurPic(dst, PicType.BINARY);
+        int[] dst = new int[curPic.getPixelsNum()];
+        BinaryMorphology.reconstruct(skeleton, dst, curPic.getWidth(), curPic.getHeight());
+        updateCurPic(dst, PicInfo.PicType.BINARY);
     }
 
     @Override
     public void edge() {
-        int[] dst = new int[curWidth * curHeight];
-        GrayscaleMorphology.edge(basePic, dst, curWidth, curHeight);
+        int[] dst = new int[basePic.getPixelsNum()];
+        GrayscaleMorphology.edge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
         updateCurPic(dst);
     }
 
     @Override
     public void OBR() {
-        int[] dst = new int[curWidth * curHeight];
-        GrayscaleMorphology.OBR(basePic, dst, curWidth, curHeight, 5);
+        int[] dst = new int[basePic.getPixelsNum()];
+        GrayscaleMorphology.OBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), 5);
         updateCurPic(dst);
     }
 
     @Override
     public void CBR() {
-        int[] dst = new int[curWidth * curHeight];
-        GrayscaleMorphology.CBR(basePic, dst, curWidth, curHeight, 5);
+        int[] dst = new int[basePic.getPixelsNum()];
+        GrayscaleMorphology.CBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), 5);
         updateCurPic(dst);
     }
 
@@ -472,10 +502,10 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        int real_x = (int) (event.getX() * curWidth / v.getWidth());
-        int real_y = (int) (event.getY() * curHeight / v.getHeight());
+        int real_x = (int) (event.getX() * curPic.getWidth() / v.getWidth());
+        int real_y = (int) (event.getY() * curPic.getHeight() / v.getHeight());
 
-        int pixel = curPic[real_x + real_y * curWidth];
+        int pixel = curPic.getPixels()[real_x + real_y * curPic.getWidth()];
         int r = Color.red(pixel);
         int g = Color.green(pixel);
         int b = Color.blue(pixel);
@@ -483,7 +513,7 @@ public class MainActivity extends AppCompatActivity
 
         String info = "width: " + v.getWidth()
                 + ", height: " + v.getHeight()
-                + ", zoom: " + v.getWidth() * 100 / curWidth + "%";
+                + ", zoom: " + v.getWidth() * 100 / curPic.getWidth() + "%";
         TextView text = (TextView) findViewById(R.id.size_info_textView);
         if (text != null) {
             text.setText(info);
@@ -506,30 +536,37 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void linearContrast(double k, double b) {
-        int[] dst = new int[curWidth * curHeight];
-        Contrast.linear(basePic, dst, k, b);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Contrast.linear(basePic.getPixels(), dst, k, b);
         updateCurPic(dst);
     }
 
     @Override
     public void logContrast(double a, double b, double c) {
-        int[] dst = new int[curWidth * curHeight];
-        Contrast.log(basePic, dst, a, b, c);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Contrast.log(basePic.getPixels(), dst, a, b, c);
         updateCurPic(dst);
     }
 
     @Override
     public void powContrast(double a, double b, double c) {
-        int[] dst = new int[curWidth * curHeight];
-        Contrast.pow(basePic, dst, a, b, c);
+        int[] dst = new int[basePic.getPixelsNum()];
+        Contrast.pow(basePic.getPixels(), dst, a, b, c);
         updateCurPic(dst);
     }
 
-    private enum PicType {
-        NONE,
-        COLOR,
-        GRAY,
-        BINARY
+    @Override
+    public void rotate(int degree, int choice) {
+        PicInfo ret = null;
+        switch (choice) {
+            case R.id.nearest_neighbor_radioButton:
+                ret = Geometry.nearestNeighborRotate(basePic, degree);
+                break;
+        }
+        if (ret != null) {
+            updateCurPic(ret.getPixels(), ret.getWidth(), ret.getHeight(), ret.getPicType());
+        }
     }
+
 
 }
