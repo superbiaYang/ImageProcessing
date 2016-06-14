@@ -134,11 +134,5 @@ public class BasicFragment extends Fragment implements
         void separateChannel(int channelMask);
 
         boolean isColor();
-
-        int getCurHeight();
-
-        int getCurWidth();
-
-        int getCurZoom();
     }
 }

@@ -16,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -128,7 +127,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        basePic = null;
         if (id == R.id.nav_gallery) {
             // Handle the camera action
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -305,8 +303,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void erode() {
-        int[] dst = new int[basePic.getPixelsNum()];
-        Morphology.erode(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        int[] dst = new int[curPic.getPixelsNum()];
+        Morphology.erode(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
         updateCurPic(dst);
     }
 
@@ -417,23 +415,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public int getCurHeight() {
-        return curPic.getHeight();
-    }
-
-    @Override
-    public int getCurWidth() {
-        return curPic.getWidth();
-    }
-
-    @Override
-    public int getCurZoom() {
-        ImageView view = (ImageView) findViewById(R.id.imageView);
-        Log.i("width", "" + view.getWidth());
-        return view.getWidth() * 100 / curPic.getWidth();
-    }
-
-    @Override
     public void transformDistance() {
         int[] dst = new int[curPic.getPixelsNum()];
         BinaryMorphology.distanceTransform(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
@@ -519,7 +500,7 @@ public class MainActivity extends AppCompatActivity
             text.setText(info);
         }
 
-        info = "X: " + event.getX() + ", Y: " + event.getY();
+        info = "X: " + (int) event.getX() + ", Y: " + (int) event.getY();
         text = (TextView) findViewById(R.id.coordinate_textView);
         if (text != null) {
             text.setText(info);
