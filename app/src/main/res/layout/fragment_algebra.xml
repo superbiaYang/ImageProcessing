@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="view.fragment.AlgebraFragment">
+
+
+    <ImageView
+        android:id="@+id/algebra_imageView"
+        android:layout_width="90dp"
+        android:layout_height="160dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/algebra_open_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/algebra_imageView"
+        android:text="open" />
+
+    <Button
+        android:id="@+id/algebra_add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/algebra_open_button"
+        android:layout_toEndOf="@+id/algebra_imageView"
+        android:text="add" />
+
+    <Button
+        android:id="@+id/algebra_sub_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/algebra_add_button"
+        android:layout_toEndOf="@+id/algebra_imageView"
+        android:text="sub" />
+
+    <Button
+        android:id="@+id/algebra_multi_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/algebra_sub_button"
+        android:layout_toEndOf="@+id/algebra_imageView"
+        android:text="multi" />
+</RelativeLayout>

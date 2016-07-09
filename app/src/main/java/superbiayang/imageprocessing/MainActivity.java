@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 
+import processor.Algebra;
 import processor.Basic;
 import processor.Binary;
 import processor.Contrast;
@@ -36,6 +37,7 @@ import processor.OpenCV.BinaryMorphology;
 import processor.OpenCV.Filter;
 import processor.OpenCV.GrayscaleMorphology;
 import processor.OpenCV.Morphology;
+import view.fragment.AlgebraFragment;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
 import view.fragment.BinaryMorphologyFragment;
@@ -57,8 +59,11 @@ public class MainActivity extends AppCompatActivity
         GrayscaleMorphologyFragment.OnFragmentInteractionListener,
         ContrastFragment.OnFragmentInteractionListener,
         GeometryFragment.OnFragmentInteractionListener,
+        AlgebraFragment.OnFragmentInteractionListener,
         View.OnTouchListener {
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
+    private static final int OPEN_PIC_MENU = 0;
+    private static final int OPEN_PIC_ALGEBRA = 1;
 
     static {
         MenuIdFragmentTag.append(R.id.menu_op_basic, "BASIC_FRAGMENT");
@@ -123,16 +128,14 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_gallery) {
-            // Handle the camera action
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
             openAlbumIntent.setType("image/*");
-            startActivityForResult(openAlbumIntent, 0);
+            startActivityForResult(openAlbumIntent, OPEN_PIC_MENU);
         } else {
             showProcessorFragment(id);
         }
@@ -193,28 +196,43 @@ public class MainActivity extends AppCompatActivity
                 case R.id.menu_op_geometry:
                     fragment = GeometryFragment.newInstance();
                     break;
+                case R.id.menu_op_algebra:
+                    fragment = AlgebraFragment.newInstance();
+                    break;
             }
         }
         fragmentTransaction.replace(R.id.op_layout, fragment, tag);
         fragmentTransaction.commit();
+        curFragment = id;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         if (resultCode != RESULT_OK)
             return;
         switch (requestCode) {
-            case 0:
-                Uri uri = data.getData();
+            case OPEN_PIC_MENU:
                 try {
+                    Uri uri = data.getData();
                     ContentResolver cr = this.getContentResolver();
                     initCurPic(BitmapFactory.decodeStream(cr.openInputStream(uri)));
                     showProcessorFragment(R.id.menu_op_basic);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-
                 break;
+            case OPEN_PIC_ALGEBRA:
+                try {
+                    Uri uri = data.getData();
+                    ContentResolver cr = this.getContentResolver();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    AlgebraFragment fragment = (AlgebraFragment) fragmentManager.findFragmentByTag("fragment_" + curFragment);
+                    fragment.setBitmap(BitmapFactory.decodeStream(cr.openInputStream(uri)));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                break;
+
             default:
                 break;
         }
@@ -371,6 +389,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(false);
+            menu.findItem(R.id.menu_op_algebra).setEnabled(true);
         } else if (curPic.getPicType() == PicInfo.PicType.GRAY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_contrast).setEnabled(true);
@@ -381,6 +400,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(false);
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(true);
+            menu.findItem(R.id.menu_op_algebra).setEnabled(true);
         } else if (curPic.getPicType() == PicInfo.PicType.BINARY) {
             menu.findItem(R.id.menu_op_basic).setEnabled(true);
             menu.findItem(R.id.menu_op_contrast).setEnabled(true);
@@ -391,6 +411,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_op_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_binary_morphology).setEnabled(true);
             menu.findItem(R.id.menu_op_grayscale_morphology).setEnabled(true);
+            menu.findItem(R.id.menu_op_algebra).setEnabled(true);
         }
     }
 
@@ -587,5 +608,34 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void openAlgebraBitmap() {
+        Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        openAlbumIntent.setType("image/*");
+        startActivityForResult(openAlbumIntent, OPEN_PIC_ALGEBRA);
+    }
 
+    @Override
+    public void add(PicInfo pic) {
+        PicInfo ret = Algebra.add(basePic, pic);
+        if (ret != null) {
+            updateCurPic(ret.getPixels(), ret.getWidth(), ret.getHeight(), ret.getPicType());
+        }
+    }
+
+    @Override
+    public void sub(PicInfo pic) {
+        PicInfo ret = Algebra.sub(basePic, pic);
+        if (ret != null) {
+            updateCurPic(ret.getPixels(), ret.getWidth(), ret.getHeight(), ret.getPicType());
+        }
+    }
+
+    @Override
+    public void multi(PicInfo pic) {
+        PicInfo ret = Algebra.multi(basePic, pic);
+        if (ret != null) {
+            updateCurPic(ret.getPixels(), ret.getWidth(), ret.getHeight(), ret.getPicType());
+        }
+    }
 }
