@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,61 +11,60 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:onClick="onGrayscaleButtonPressed"
         android:text="red"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/grayscale_green_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="onGrayscaleButtonPressed"
+        android:layout_toEndOf="@+id/grayscale_red_button"
         android:text="green"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/grayscale_blue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:onClick="onGrayscaleButtonPressed"
+        android:layout_toEndOf="@+id/grayscale_green_button"
         android:text="blue"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/grayscale_avg_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/grayscale_red_button"
-        android:layout_below="@+id/grayscale_red_button"
-        android:onClick="onGrayscaleButtonPressed"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/grayscale_red_button"
+        android:layout_toEndOf="@+id/grayscale_blue_button"
         android:text="avg"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/grayscale_opencv_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/grayscale_green_button"
-        android:layout_alignStart="@+id/grayscale_green_button"
-        android:layout_below="@+id/grayscale_red_button"
-        android:onClick="onGrayscaleButtonPressed"
+        android:layout_below="@id/grayscale_green_button"
+        android:layout_toEndOf="@+id/grayscale_avg_button"
         android:text="opencv"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/grayscale_bio_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/grayscale_blue_button"
-        android:layout_alignStart="@+id/grayscale_blue_button"
-        android:layout_below="@+id/grayscale_blue_button"
-        android:onClick="onGrayscaleButtonPressed"
+        android:layout_below="@id/grayscale_blue_button"
+        android:layout_toEndOf="@+id/grayscale_opencv_button"
         android:text="bio"
-        android:textSize="10dp" />
+        android:textSize="10dp"
+        app:layout_widthPercent="33%" />
 
     <ImageView
         android:id="@+id/grayscale_histogram_imageView"
@@ -83,4 +83,4 @@
         android:text="equalization"
         android:textSize="10dp"
         android:visibility="invisible" />
-</RelativeLayout>
+</android.support.percent.PercentRelativeLayout>

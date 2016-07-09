@@ -31,6 +31,7 @@ public class PicInfo {
         width = bitmap.getWidth();
         height = bitmap.getHeight();
         pixels = new int[width * height];
+        picType = PicType.COLOR;
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
     }
 
