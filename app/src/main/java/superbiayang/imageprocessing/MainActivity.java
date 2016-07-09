@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        basePic = null;
         if (id == R.id.nav_gallery) {
             // Handle the camera action
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -223,6 +222,7 @@ public class MainActivity extends AppCompatActivity
 
     private void initCurPic(Bitmap bitmap) {
         curPic = new PicInfo(bitmap);
+        curPic.setPicType(PicInfo.PicType.COLOR);
         updateMenu();
         showCurPic();
     }
@@ -561,6 +561,25 @@ public class MainActivity extends AppCompatActivity
         switch (choice) {
             case R.id.nearest_neighbor_radioButton:
                 ret = Geometry.nearestNeighborRotate(basePic, degree);
+                break;
+            case R.id.bilinear_interpolation_radioButton:
+                ret = Geometry.bilinearInterpolationRotate(basePic, degree);
+                break;
+        }
+        if (ret != null) {
+            updateCurPic(ret.getPixels(), ret.getWidth(), ret.getHeight(), ret.getPicType());
+        }
+    }
+
+    @Override
+    public void resize(int width, int height, int choice) {
+        PicInfo ret = null;
+        switch (choice) {
+            case R.id.nearest_neighbor_radioButton:
+                ret = Geometry.nearestNeighborResize(basePic, width, height);
+                break;
+            case R.id.bilinear_interpolation_radioButton:
+                ret = Geometry.bilinearInterpolationResize(basePic, width, height);
                 break;
         }
         if (ret != null) {

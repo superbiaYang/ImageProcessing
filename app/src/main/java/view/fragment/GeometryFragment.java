@@ -68,7 +68,7 @@ public class GeometryFragment extends Fragment implements
         editText.addTextChangedListener(this);
 
         int[] viewId = {
-
+                R.id.resize_button
         };
         for (int id : viewId) {
             View v = (View) view.findViewById(id);
@@ -111,16 +111,16 @@ public class GeometryFragment extends Fragment implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.linear_radioButton:
-                enableLinearInput();
-                break;
-            case R.id.logarithm_radioButton:
-                enableLogInput();
-                break;
-            case R.id.power_radioButton:
-                enablePowInput();
-                break;
+            case R.id.resize_button:
+                resize();
         }
+    }
+
+    private void resize() {
+        int width = (int) getValue(R.id.geo_width_editText, 0);
+        int height = (int) getValue(R.id.geo_height_editText, 0);
+        RadioGroup radioGroup = (RadioGroup) getView().findViewById(R.id.geometry_radioGroup);
+        mListener.resize(width, height, radioGroup.getCheckedRadioButtonId());
     }
 
     private double getValue(int id, double defaultValue) {
@@ -136,64 +136,6 @@ public class GeometryFragment extends Fragment implements
             v = Double.parseDouble(text);
         }
         return v;
-    }
-
-    private void process() {
-    }
-
-    private void disableInput() {
-        int[] editTextId = {
-                R.id.linear_k_editText,
-                R.id.linear_b_editText,
-                R.id.log_a_editText,
-                R.id.log_b_editText,
-                R.id.log_c_editText,
-                R.id.pow_a_editText,
-                R.id.pow_b_editText,
-                R.id.pow_c_editText
-        };
-        for (int id : editTextId) {
-            EditText editText = (EditText) getView().findViewById(id);
-            editText.setEnabled(false);
-        }
-    }
-
-    private void enableLinearInput() {
-        disableInput();
-        int[] editTextId = {
-                R.id.linear_k_editText,
-                R.id.linear_b_editText
-        };
-        for (int id : editTextId) {
-            EditText editText = (EditText) getView().findViewById(id);
-            editText.setEnabled(true);
-        }
-    }
-
-    private void enableLogInput() {
-        disableInput();
-        int[] editTextId = {
-                R.id.log_a_editText,
-                R.id.log_b_editText,
-                R.id.log_c_editText
-        };
-        for (int id : editTextId) {
-            EditText editText = (EditText) getView().findViewById(id);
-            editText.setEnabled(true);
-        }
-    }
-
-    private void enablePowInput() {
-        disableInput();
-        int[] editTextId = {
-                R.id.pow_a_editText,
-                R.id.pow_b_editText,
-                R.id.pow_c_editText
-        };
-        for (int id : editTextId) {
-            EditText editText = (EditText) getView().findViewById(id);
-            editText.setEnabled(true);
-        }
     }
 
     @Override
@@ -246,5 +188,7 @@ public class GeometryFragment extends Fragment implements
      */
     public interface OnFragmentInteractionListener {
         void rotate(int degree, int choice);
+
+        void resize(int width, int height, int choice);
     }
 }

@@ -91,14 +91,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Nearest Neighbor" />
+            android:text="NN" />
 
         <RadioButton
             android:id="@+id/bilinear_interpolation_radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"
-            android:text="Bilinear Interpolation" />
+            android:text="LINEAR" />
     </RadioGroup>
 
 </RelativeLayout>
