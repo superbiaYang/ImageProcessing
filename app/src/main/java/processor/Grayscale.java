@@ -74,7 +74,19 @@ public class Grayscale {
         return ret;
     }
 
-    public static Bitmap Histogram(int[] histogram) {
+    public static int[] histogram(int[] src) {
+        int[] histogram = new int[COLOR_THRESHOLD];
+        for (int i = 0; i < src.length; i++) {
+            int gray = (Color.red(src[i]) +
+                    Color.green(src[i]) +
+                    Color.blue(src[i])) / 3;
+            histogram[gray]++;
+        }
+        return histogram;
+    }
+
+
+    public static Bitmap histogramBmp(int[] histogram) {
         int[] pixels = new int[COLOR_THRESHOLD * HISTOGRAM_HEIGHT];
         int max = 0;
         for (int i = 0; i < COLOR_THRESHOLD; i++) {

@@ -7,7 +7,7 @@
     <EditText
         android:id="@+id/median_blur_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignEnd="@+id/median_blur_button"
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/median_blur_button"
@@ -18,7 +18,7 @@
     <Button
         android:id="@+id/median_blur_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/median_blur_editText"
         android:layout_gravity="start|top"
@@ -27,7 +27,7 @@
     <EditText
         android:id="@+id/mean_blur_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_above="@+id/median_blur_button"
         android:layout_alignEnd="@+id/mean_blur_button"
         android:layout_alignStart="@+id/mean_blur_button"
@@ -38,7 +38,7 @@
     <Button
         android:id="@+id/mean_blur_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/median_blur_editText"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal|top"
@@ -47,7 +47,7 @@
     <Button
         android:id="@+id/gaussian_blur_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/gaussian_blur_sigma_editText"
         android:layout_gravity="end|top"
@@ -56,7 +56,7 @@
     <EditText
         android:id="@+id/gaussian_blur_size_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_above="@+id/mean_blur_button"
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/gaussian_blur_button"
@@ -66,7 +66,7 @@
     <Button
         android:id="@+id/sobel_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignEnd="@+id/median_blur_button"
         android:layout_alignParentBottom="true"
         android:text="sobel" />
@@ -74,7 +74,7 @@
     <Button
         android:id="@+id/prewitt_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignTop="@+id/sobel_button"
         android:layout_centerHorizontal="true"
         android:text="prewitt" />
@@ -82,7 +82,7 @@
     <Button
         android:id="@+id/roberts_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/gaussian_blur_button"
         android:text="roberts" />
@@ -90,7 +90,7 @@
     <EditText
         android:id="@+id/gaussian_blur_sigma_editText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/gaussian_blur_size_editText"
         android:layout_below="@+id/gaussian_blur_size_editText"

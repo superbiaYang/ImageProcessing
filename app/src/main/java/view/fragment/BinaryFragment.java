@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import processor.Grayscale;
 import superbiayang.imageprocessing.R;
 import view.component.BinarySeekBar;
 
@@ -31,6 +33,7 @@ public class BinaryFragment extends Fragment implements
     private BinarySeekBar seekBar = null;
     private EditText minText = null;
     private EditText maxText = null;
+    private int[] histogram;
 
     public BinaryFragment() {
         // Required empty public constructor
@@ -53,6 +56,7 @@ public class BinaryFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            this.histogram = getArguments().getIntArray("histogram");
         }
     }
 
@@ -65,6 +69,12 @@ public class BinaryFragment extends Fragment implements
         seekBar.setOnBinarySeekBarChangeListener(this);
         Button otsu = (Button) view.findViewById(R.id.binary_otsu_button);
         otsu.setOnClickListener(this);
+
+        if (histogram != null) {
+            ImageView imageView = (ImageView) view.findViewById(R.id.binary_histogram_imageView);
+            imageView.setImageBitmap(Grayscale.histogramBmp(histogram));
+        }
+
         minText = (EditText) view.findViewById(R.id.binary_min_editText);
         minText.addTextChangedListener(new TextWatcher() {
             @Override

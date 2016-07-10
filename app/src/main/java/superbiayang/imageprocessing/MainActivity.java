@@ -197,6 +197,9 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.menu_op_binary:
                     fragment = BinaryFragment.newInstance();
+                    Bundle bundle = new Bundle();
+                    bundle.putIntArray("histogram", Grayscale.histogram(curPic.getPixels()));
+                    fragment.setArguments(bundle);
                     break;
                 case R.id.menu_op_binary_morphology:
                     fragment = BinaryMorphologyFragment.newInstance();
@@ -424,7 +427,7 @@ public class MainActivity extends AppCompatActivity
                 basePic.getPixels(), basePic.getWidth(), basePic.getHeight(), type);
         updateCurPic(ret.pixels, PicInfo.PicType.GRAY);
         histogram = ret.histogram;
-        return Grayscale.Histogram(ret.histogram);
+        return Grayscale.histogramBmp(ret.histogram);
     }
 
     @Override
@@ -433,7 +436,7 @@ public class MainActivity extends AppCompatActivity
                 curPic.getPixels(), curPic.getWidth(), curPic.getHeight(), histogram);
         updateCurPic(ret.pixels);
         histogram = ret.histogram;
-        return Grayscale.Histogram(ret.histogram);
+        return Grayscale.histogramBmp(ret.histogram);
     }
 
     public void updateMenu() {
