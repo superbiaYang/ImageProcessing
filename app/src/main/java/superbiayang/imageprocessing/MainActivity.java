@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,8 +25,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import processor.Algebra;
 import processor.Basic;
@@ -131,10 +137,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_open) {
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
             openAlbumIntent.setType("image/*");
             startActivityForResult(openAlbumIntent, OPEN_PIC_MENU);
+        } else if (id == R.id.nav_save) {
+            saveImageToGallery();
         } else {
             showProcessorFragment(id);
         }
@@ -215,6 +223,9 @@ public class MainActivity extends AppCompatActivity
                     ContentResolver cr = this.getContentResolver();
                     initCurPic(BitmapFactory.decodeStream(cr.openInputStream(uri)));
                     showProcessorFragment(R.id.menu_op_basic);
+                    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                    Menu menu = navigationView.getMenu();
+                    menu.findItem(R.id.nav_save).setEnabled(true);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -235,6 +246,41 @@ public class MainActivity extends AppCompatActivity
             default:
                 break;
         }
+    }
+
+    private void saveImageToGallery() {
+        Bitmap bmp = Bitmap.createBitmap(
+                curPic.getPixels(), curPic.getWidth(),
+                curPic.getHeight(), Bitmap.Config.ARGB_8888);
+        // 首先保存图片
+        File appDir = new File(Environment.getExternalStorageDirectory(), "ImageProcessing");
+        if (!appDir.exists()) {
+            appDir.mkdirs();
+        }
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 其次把文件插入到系统图库
+        try {
+            MediaStore.Images.Media.insertImage(this.getContentResolver(),
+                    file.getAbsolutePath(), fileName, null);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // 最后通知图库更新
+        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(file.getAbsolutePath())));
+        Toast.makeText(MainActivity.this, "Image " + fileName + " saved.", Toast.LENGTH_LONG).show();
     }
 
     private void initCurPic(Bitmap bitmap) {
