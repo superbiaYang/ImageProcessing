@@ -39,9 +39,11 @@ import processor.Contrast;
 import processor.Geometry;
 import processor.Grayscale;
 import processor.OpenCV.BinaryMorphology;
+import processor.OpenCV.Element;
 import processor.OpenCV.Filter;
 import processor.OpenCV.GrayscaleMorphology;
 import processor.OpenCV.Morphology;
+import view.activity.ElementActivity;
 import view.fragment.AlgebraFragment;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     private static final SparseArray<String> MenuIdFragmentTag = new SparseArray<>();
     private static final int OPEN_PIC_MENU = 0;
     private static final int OPEN_PIC_ALGEBRA = 1;
+    private static final int OPEN_ELEMENT_EDITOR = 2;
 
     static {
         MenuIdFragmentTag.append(R.id.menu_op_basic, "BASIC_FRAGMENT");
@@ -78,6 +81,8 @@ public class MainActivity extends AppCompatActivity
     private PicInfo basePic = null;
     private int[] histogram = null;
     private int curFragment = -1;
+    private int elementType = Element.DEFAULT_TYPE;
+    private int elementSize = Element.DEFAULT_SIZE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +131,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.set_element) {
+            Intent intent = new Intent(MainActivity.this, ElementActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("type", elementType);
+            intent.putExtra("size", elementSize);
+            startActivityForResult(intent, OPEN_ELEMENT_EDITOR);
             return true;
         }
 
@@ -219,6 +229,7 @@ public class MainActivity extends AppCompatActivity
         switch (requestCode) {
             case OPEN_PIC_MENU:
                 try {
+                    curFragment = -1;
                     Uri uri = data.getData();
                     ContentResolver cr = this.getContentResolver();
                     initCurPic(BitmapFactory.decodeStream(cr.openInputStream(uri)));
@@ -241,6 +252,10 @@ public class MainActivity extends AppCompatActivity
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                break;
+            case OPEN_ELEMENT_EDITOR:
+                elementSize = data.getIntExtra("size", Element.DEFAULT_SIZE);
+                elementType = data.getIntExtra("type", Element.DEFAULT_TYPE);
                 break;
 
             default:
