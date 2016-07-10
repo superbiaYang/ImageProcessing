@@ -154,3 +154,71 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilatio
     env->ReleaseIntArrayElements(srcArray, src, JNI_ABORT);
     env->ReleaseIntArrayElements(maskArray, mask, JNI_ABORT);
 }
+
+
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    standardEdge
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_standardEdge
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+{
+    jboolean copy = false;
+    jint* src = env->GetIntArrayElements(srcArray, &copy);
+    jint* dst = env->GetIntArrayElements(dstArray, &copy);
+    Mat srcMat(height, width, CV_8UC4, src);
+    cvtColor(srcMat, srcMat, CV_RGB2GRAY);
+    Mat erodeMat, dilateMat, dstMat;
+    erode(srcMat, erodeMat, ELEMENT);
+    dilate(srcMat, dilateMat, ELEMENT);
+    dstMat = dilateMat - erodeMat;
+    cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
+    memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
+    env->ReleaseIntArrayElements(srcArray, src, JNI_ABORT);
+    env->ReleaseIntArrayElements(dstArray, dst, 0);
+}
+
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    externalEdge
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_externalEdge
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+{
+    jboolean copy = false;
+    jint* src = env->GetIntArrayElements(srcArray, &copy);
+    jint* dst = env->GetIntArrayElements(dstArray, &copy);
+    Mat srcMat(height, width, CV_8UC4, src);
+    cvtColor(srcMat, srcMat, CV_RGB2GRAY);
+    Mat dilateMat, dstMat;
+    dilate(srcMat, dilateMat, ELEMENT);
+    dstMat = dilateMat - srcMat;
+    cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
+    memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
+    env->ReleaseIntArrayElements(srcArray, src, JNI_ABORT);
+    env->ReleaseIntArrayElements(dstArray, dst, 0);
+}
+
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    internalEdge
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_internalEdge
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+{
+    jboolean copy = false;
+    jint* src = env->GetIntArrayElements(srcArray, &copy);
+    jint* dst = env->GetIntArrayElements(dstArray, &copy);
+    Mat srcMat(height, width, CV_8UC4, src);
+    cvtColor(srcMat, srcMat, CV_RGB2GRAY);
+    Mat erodeMat, dstMat;
+    erode(srcMat, erodeMat, ELEMENT);
+    dstMat = srcMat - erodeMat;
+    cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
+    memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
+    env->ReleaseIntArrayElements(srcArray, src, JNI_ABORT);
+    env->ReleaseIntArrayElements(dstArray, dst, 0);
+}

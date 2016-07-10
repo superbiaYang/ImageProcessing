@@ -58,7 +58,10 @@ public class BinaryMorphologyFragment extends Fragment implements View.OnClickLi
                 R.id.skeleton_button,
                 R.id.reconstruct_button,
                 R.id.binary_erode_button,
-                R.id.binary_conditional_dilate_button
+                R.id.binary_conditional_dilate_button,
+                R.id.standard_edge_button,
+                R.id.external_edge_button,
+                R.id.internal_edge_button
         };
         for (int id : buttonId) {
             Button button = (Button) view.findViewById(id);
@@ -123,6 +126,15 @@ public class BinaryMorphologyFragment extends Fragment implements View.OnClickLi
             case R.id.binary_conditional_dilate_button:
                 mListener.conditionalDilate();
                 break;
+            case R.id.standard_edge_button:
+                mListener.standardEdge();
+                break;
+            case R.id.internal_edge_button:
+                mListener.internalEdge();
+                break;
+            case R.id.external_edge_button:
+                mListener.externalEdge();
+                break;
         }
     }
 
@@ -146,5 +158,11 @@ public class BinaryMorphologyFragment extends Fragment implements View.OnClickLi
         void erode();
 
         void conditionalDilate();
+
+        void standardEdge();
+
+        void externalEdge();
+
+        void internalEdge();
     }
 }

@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,36 +7,78 @@
     <Button
         android:id="@+id/distance_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_gravity="left|top"
-        android:text="distance" />
+        android:text="distance"
+        android:textSize="10dp" />
 
     <Button
         android:id="@+id/skeleton_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/distance_button"
         android:layout_gravity="left|center_vertical"
-        android:text="skeleton" />
+        android:text="skeleton"
+        android:textSize="10dp" />
 
     <Button
         android:id="@+id/reconstruct_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_above="@+id/binary_erode_button"
         android:layout_gravity="left|bottom"
+        android:layout_toEndOf="@+id/skeleton_button"
         android:enabled="false"
-        android:text="reconstruct" />
+        android:text="reconstruct"
+        android:textSize="10dp" />
 
     <Button
         android:id="@+id/binary_erode_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/skeleton_button"
         android:layout_gravity="right|top"
-        android:text="erode" />
+        android:text="erode"
+        android:textSize="10dp" />
 
     <Button
         android:id="@+id/binary_conditional_dilate_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_above="@+id/standard_edge_button"
         android:layout_gravity="right|center_vertical"
-        android:text="conditionalDilate" />
-</FrameLayout>
+        android:layout_toEndOf="@+id/binary_erode_button"
+        android:text="conditional dilate"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/standard_edge_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/binary_erode_button"
+        android:text="edge s"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/external_edge_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/standard_edge_button"
+        android:layout_toEndOf="@+id/standard_edge_button"
+        android:text="edge e"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/internal_edge_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/external_edge_button"
+        android:layout_toEndOf="@+id/external_edge_button"
+        android:text="edge i"
+        android:textSize="10dp" />
+</RelativeLayout>

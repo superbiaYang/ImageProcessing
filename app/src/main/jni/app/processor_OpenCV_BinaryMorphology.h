@@ -39,6 +39,30 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilation
   (JNIEnv *, jclass, jintArray, jintArray, jintArray, jint, jint);
 
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    standardEdge
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_standardEdge
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    externalEdge
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_externalEdge
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+
+/*
+ * Class:     processor_OpenCV_BinaryMorphology
+ * Method:    internalEdge
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_internalEdge
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

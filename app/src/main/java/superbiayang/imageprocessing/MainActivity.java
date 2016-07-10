@@ -467,6 +467,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void externalEdge() {
+        int[] dst = new int[basePic.getPixelsNum()];
+        BinaryMorphology.externalEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void internalEdge() {
+        int[] dst = new int[basePic.getPixelsNum()];
+        BinaryMorphology.internalEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void standardEdge() {
+        int[] dst = new int[basePic.getPixelsNum()];
+        BinaryMorphology.standardEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst);
+    }
+
+    @Override
     public void OBR() {
         int[] dst = new int[basePic.getPixelsNum()];
         GrayscaleMorphology.OBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), 5);
