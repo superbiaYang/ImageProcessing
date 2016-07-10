@@ -10,42 +10,42 @@ extern "C" {
 /*
  * Class:     processor_OpenCV_GrayscaleMorphology
  * Method:    standardGradient
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_standardGradient
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_GrayscaleMorphology
  * Method:    externalGradient
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_externalGradient
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_GrayscaleMorphology
  * Method:    internalGradient
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_internalGradient
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_GrayscaleMorphology
  * Method:    OBR
- * Signature: ([I[IIII)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_OBR
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_GrayscaleMorphology
  * Method:    CBR
- * Signature: ([I[IIII)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_CBR
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 #ifdef __cplusplus
 }

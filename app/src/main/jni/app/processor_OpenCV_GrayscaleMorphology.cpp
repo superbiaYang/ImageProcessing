@@ -6,10 +6,8 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
-#define ELEMENT getStructuringElement(MORPH_RECT, Size(7, 7), Point(1, 1))
-
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_standardGradient
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -17,8 +15,9 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_standardGradien
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat erodeMat, dilateMat, dstMat;
-    erode(srcMat, erodeMat, ELEMENT);
-    dilate(srcMat, dilateMat, ELEMENT);
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+    erode(srcMat, erodeMat, element);
+    dilate(srcMat, dilateMat, element);
     dstMat = (dilateMat - erodeMat) / 2;
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
@@ -27,7 +26,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_standardGradien
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_externalGradient
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -35,7 +34,8 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_externalGradien
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat dilateMat, dstMat;
-    dilate(srcMat, dilateMat, ELEMENT);
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+    dilate(srcMat, dilateMat, element);
     dstMat = (dilateMat - srcMat) / 2;
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
@@ -44,7 +44,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_externalGradien
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_internalGradient
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -52,7 +52,8 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_internalGradien
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat erodeMat, dstMat;
-    erode(srcMat, erodeMat, ELEMENT);
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+    erode(srcMat, erodeMat, element);
     dstMat = (srcMat - erodeMat) / 2;
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
@@ -61,14 +62,14 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_internalGradien
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_OBR
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint n)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
     jint* dst = env->GetIntArrayElements(dstArray, &copy);
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
-    Mat element = getStructuringElement(MORPH_RECT, Size(2 * n + 1, 2 * n + 1), Point(n, n));
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
     erode(srcMat, srcMat, element);
     dilate(srcMat, srcMat, element);
     Mat dstMat = srcMat.clone();
@@ -105,14 +106,14 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_OBR
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_CBR
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint n)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
     jint* dst = env->GetIntArrayElements(dstArray, &copy);
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
-    Mat element = getStructuringElement(MORPH_RECT, Size(2 * n + 1, 2 * n + 1), Point(n, n));
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
     dilate(srcMat, srcMat, element);
     erode(srcMat, srcMat, element);
     Mat dstMat = srcMat.clone();

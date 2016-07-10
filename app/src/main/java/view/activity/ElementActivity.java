@@ -51,7 +51,7 @@ public class ElementActivity extends Activity {
                 type = Element.MORPH_RECT;
                 break;
             case R.id.cross_radioButton:
-                type = Element.MORPH_RECT;
+                type = Element.MORPH_CROSS;
                 break;
             case R.id.ellipse_radioButton:
                 type = Element.MORPH_ELLIPSE;

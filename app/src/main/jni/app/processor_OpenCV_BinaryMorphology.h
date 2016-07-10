@@ -18,50 +18,50 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_distanceTransform
 /*
  * Class:     processor_OpenCV_BinaryMorphology
  * Method:    skeleton
- * Signature: ([I[I[III)V
+ * Signature: ([I[I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_skeleton
-  (JNIEnv *, jclass, jintArray, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_BinaryMorphology
  * Method:    reconstruct
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_BinaryMorphology
  * Method:    conditionalDilation
- * Signature: ([I[I[III)V
+ * Signature: ([I[I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilation
-  (JNIEnv *, jclass, jintArray, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_BinaryMorphology
  * Method:    standardEdge
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_standardEdge
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_BinaryMorphology
  * Method:    externalEdge
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_externalEdge
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_BinaryMorphology
  * Method:    internalEdge
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_internalEdge
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 #ifdef __cplusplus
 }

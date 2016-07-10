@@ -8,13 +8,13 @@ public class GrayscaleMorphology {
         System.loadLibrary("OpenCVHelper");
     }
 
-    public static native void standardGradient(int[] src, int[] dst, int width, int height);
+    public static native void standardGradient(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void externalGradient(int[] src, int[] dst, int width, int height);
+    public static native void externalGradient(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void internalGradient(int[] src, int[] dst, int width, int height);
+    public static native void internalGradient(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void OBR(int[] src, int[] dst, int width, int height, int n);
+    public static native void OBR(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void CBR(int[] src, int[] dst, int width, int height, int n);
+    public static native void CBR(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 }

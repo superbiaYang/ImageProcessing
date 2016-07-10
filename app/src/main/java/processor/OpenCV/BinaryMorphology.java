@@ -10,16 +10,16 @@ public class BinaryMorphology {
 
     public static native void distanceTransform(int[] src, int[] dst, int width, int height);
 
-    public static native void skeleton(int[] src, int[] dst, int[] skeleton, int width, int height);
+    public static native void skeleton(int[] src, int[] dst, int[] skeleton, int width, int height, int elemSize, int elemType);
 
-    public static native void reconstruct(int[] skeleton, int[] dst, int width, int height);
+    public static native void reconstruct(int[] skeleton, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void conditionalDilation(int[] src, int[] mask, int[] dst, int width, int height);
+    public static native void conditionalDilation(int[] src, int[] mask, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void standardEdge(int[] src, int[] dst, int width, int height);
+    public static native void standardEdge(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void externalEdge(int[] src, int[] dst, int width, int height);
+    public static native void externalEdge(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
-    public static native void internalEdge(int[] src, int[] dst, int width, int height);
+    public static native void internalEdge(int[] src, int[] dst, int width, int height, int elemSize, int elemType);
 
 }

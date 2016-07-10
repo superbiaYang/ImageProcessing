@@ -6,8 +6,6 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
-#define ELEMENT getStructuringElement(MORPH_CROSS, Size(3, 3), Point(1, 1))
-
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_distanceTransform
 (JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
 {
@@ -35,7 +33,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_distanceTransform
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_skeleton
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jintArray skeletonArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jintArray skeletonArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -45,13 +43,14 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_skeleton
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat dstMat(height, width, CV_8UC1, 0);
     Mat erodeMat, openMat, subMat;
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
     bool flag = false;
     int count = 1;
     do {
         flag = false;
-        erode(srcMat, erodeMat, ELEMENT);
-        erode(erodeMat, openMat, ELEMENT);
-        dilate(openMat, openMat, ELEMENT);
+        erode(srcMat, erodeMat, element);
+        erode(erodeMat, openMat, element);
+        dilate(openMat, openMat, element);
         subMat = erodeMat - openMat;
         dstMat = subMat + dstMat;
         srcMat = erodeMat;
@@ -79,14 +78,14 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_skeleton
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
-(JNIEnv *env, jclass, jintArray skeletonArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray skeletonArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* skeleton = env->GetIntArrayElements(skeletonArray, &copy);
     jint* dst = env->GetIntArrayElements(dstArray, &copy);
 
     Mat dstMat = Mat::zeros(height,width,CV_8UC1);
-
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
     int maxSkeleton = 0;
     for (int i = 0; i < width * height; ++i)
     {
@@ -102,7 +101,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
             ptr[i] = (skeleton[i] == v ? 255 : 0);
         }
         dstMat = dstMat + subMat;
-        dilate(dstMat, dstMat, ELEMENT);
+        dilate(dstMat, dstMat, element);
     }
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
@@ -112,7 +111,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_reconstruct
 }
 
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilation
-(JNIEnv *env, jclass, jintArray srcArray, jintArray maskArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray maskArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -127,10 +126,12 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilatio
     Mat dstMat = srcMat.clone();
     Mat resultMat = srcMat.clone();
 
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+
     bool flag = true;
     do
     {
-        dilate(resultMat, dilateMat, ELEMENT);
+        dilate(resultMat, dilateMat, element);
         dilateMat.copyTo(resultMat, maskMat);
 
         flag = false;
@@ -162,7 +163,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_conditionalDilatio
  * Signature: ([I[III)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_standardEdge
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -170,8 +171,9 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_standardEdge
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat erodeMat, dilateMat, dstMat;
-    erode(srcMat, erodeMat, ELEMENT);
-    dilate(srcMat, dilateMat, ELEMENT);
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+    erode(srcMat, erodeMat, element);
+    dilate(srcMat, dilateMat, element);
     dstMat = dilateMat - erodeMat;
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
@@ -185,7 +187,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_standardEdge
  * Signature: ([I[III)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_externalEdge
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -193,7 +195,8 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_externalEdge
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat dilateMat, dstMat;
-    dilate(srcMat, dilateMat, ELEMENT);
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+    dilate(srcMat, dilateMat, element);
     dstMat = dilateMat - srcMat;
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));
@@ -207,7 +210,7 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_externalEdge
  * Signature: ([I[III)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_internalEdge
-(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height)
+(JNIEnv *env, jclass, jintArray srcArray, jintArray dstArray, jint width, jint height, jint elemSize, jint elemType)
 {
     jboolean copy = false;
     jint* src = env->GetIntArrayElements(srcArray, &copy);
@@ -215,7 +218,8 @@ JNIEXPORT void JNICALL Java_processor_OpenCV_BinaryMorphology_internalEdge
     Mat srcMat(height, width, CV_8UC4, src);
     cvtColor(srcMat, srcMat, CV_RGB2GRAY);
     Mat erodeMat, dstMat;
-    erode(srcMat, erodeMat, ELEMENT);
+    Mat element = getStructuringElement(elemType, Size(elemSize, elemSize), Point(elemSize / 2, elemSize / 2));
+    erode(srcMat, erodeMat, element);
     dstMat = srcMat - erodeMat;
     cvtColor(dstMat, dstMat, CV_GRAY2RGBA);
     memcpy(dst, dstMat.ptr(0), width * height * sizeof(jint));

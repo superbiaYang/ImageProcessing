@@ -10,34 +10,34 @@ extern "C" {
 /*
  * Class:     processor_OpenCV_Morphology
  * Method:    erode
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_Morphology_erode
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_Morphology
  * Method:    dilate
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_Morphology_dilate
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_Morphology
  * Method:    open
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_Morphology_open
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 /*
  * Class:     processor_OpenCV_Morphology
  * Method:    close
- * Signature: ([I[III)V
+ * Signature: ([I[IIIII)V
  */
 JNIEXPORT void JNICALL Java_processor_OpenCV_Morphology_close
-  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint, jint, jint);
 
 #ifdef __cplusplus
 }

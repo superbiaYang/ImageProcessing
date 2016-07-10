@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void erode() {
         int[] dst = new int[curPic.getPixelsNum()];
-        Morphology.erode(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
+        Morphology.erode(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
@@ -393,28 +393,28 @@ public class MainActivity extends AppCompatActivity
         int[] dst = new int[curPic.getPixelsNum()];
         BinaryMorphology.conditionalDilation(
                 curPic.getPixels(), basePic.getPixels(),
-                dst, curPic.getWidth(), curPic.getHeight());
+                dst, curPic.getWidth(), curPic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void dilate() {
         int[] dst = new int[curPic.getPixelsNum()];
-        Morphology.dilate(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
+        Morphology.dilate(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void open() {
         int[] dst = new int[curPic.getPixelsNum()];
-        Morphology.open(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
+        Morphology.open(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void close() {
         int[] dst = new int[curPic.getPixelsNum()];
-        Morphology.close(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight());
+        Morphology.close(curPic.getPixels(), dst, curPic.getWidth(), curPic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity
     public int[] skeleton() {
         int[] dst = new int[basePic.getPixelsNum()];
         int[] skeleton = new int[basePic.getPixelsNum()];
-        BinaryMorphology.skeleton(basePic.getPixels(), dst, skeleton, basePic.getWidth(), basePic.getHeight());
+        BinaryMorphology.skeleton(basePic.getPixels(), dst, skeleton, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst, PicInfo.PicType.BINARY);
         return skeleton;
     }
@@ -516,63 +516,63 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void reconstruct(int[] skeleton) {
         int[] dst = new int[curPic.getPixelsNum()];
-        BinaryMorphology.reconstruct(skeleton, dst, curPic.getWidth(), curPic.getHeight());
+        BinaryMorphology.reconstruct(skeleton, dst, curPic.getWidth(), curPic.getHeight(), elementSize, elementType);
         updateCurPic(dst, PicInfo.PicType.BINARY);
     }
 
     @Override
     public void standardGradient() {
         int[] dst = new int[basePic.getPixelsNum()];
-        GrayscaleMorphology.standardGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        GrayscaleMorphology.standardGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void externalGradient() {
         int[] dst = new int[basePic.getPixelsNum()];
-        GrayscaleMorphology.externalGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        GrayscaleMorphology.externalGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void internalGradient() {
         int[] dst = new int[basePic.getPixelsNum()];
-        GrayscaleMorphology.internalGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        GrayscaleMorphology.internalGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void externalEdge() {
         int[] dst = new int[basePic.getPixelsNum()];
-        BinaryMorphology.externalEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        BinaryMorphology.externalEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void internalEdge() {
         int[] dst = new int[basePic.getPixelsNum()];
-        BinaryMorphology.internalEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        BinaryMorphology.internalEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void standardEdge() {
         int[] dst = new int[basePic.getPixelsNum()];
-        BinaryMorphology.standardEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        BinaryMorphology.standardEdge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void OBR() {
         int[] dst = new int[basePic.getPixelsNum()];
-        GrayscaleMorphology.OBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), 5);
+        GrayscaleMorphology.OBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
     @Override
     public void CBR() {
         int[] dst = new int[basePic.getPixelsNum()];
-        GrayscaleMorphology.CBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), 5);
+        GrayscaleMorphology.CBR(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight(), elementSize, elementType);
         updateCurPic(dst);
     }
 
