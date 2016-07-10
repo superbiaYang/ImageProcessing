@@ -5,19 +5,19 @@
     tools:context="view.fragment.GrayscaleMorphologyFragment">
 
     <Button
-        android:id="@+id/edge_button"
+        android:id="@+id/standard_gradient_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:text="edge" />
+        android:layout_toEndOf="@+id/obr_button"
+        android:text="gradient s" />
 
     <Button
         android:id="@+id/obr_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/edge_button"
         android:text="OBR" />
 
     <Button
@@ -27,4 +27,20 @@
         android:layout_alignStart="@+id/obr_button"
         android:layout_below="@+id/obr_button"
         android:text="CBR" />
+
+    <Button
+        android:id="@+id/external_gradient_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/standard_gradient_button"
+        android:layout_toEndOf="@+id/obr_button"
+        android:text="gradient e" />
+
+    <Button
+        android:id="@+id/internal_gradient_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cbr_button"
+        android:layout_toEndOf="@+id/cbr_button"
+        android:text="gradient i" />
 </RelativeLayout>

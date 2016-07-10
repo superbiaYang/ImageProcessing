@@ -460,9 +460,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void edge() {
+    public void standardGradient() {
         int[] dst = new int[basePic.getPixelsNum()];
-        GrayscaleMorphology.edge(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        GrayscaleMorphology.standardGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void externalGradient() {
+        int[] dst = new int[basePic.getPixelsNum()];
+        GrayscaleMorphology.externalGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
+        updateCurPic(dst);
+    }
+
+    @Override
+    public void internalGradient() {
+        int[] dst = new int[basePic.getPixelsNum()];
+        GrayscaleMorphology.internalGradient(basePic.getPixels(), dst, basePic.getWidth(), basePic.getHeight());
         updateCurPic(dst);
     }
 

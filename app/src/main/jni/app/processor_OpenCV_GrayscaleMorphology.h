@@ -9,10 +9,26 @@ extern "C" {
 #endif
 /*
  * Class:     processor_OpenCV_GrayscaleMorphology
- * Method:    edge
+ * Method:    standardGradient
  * Signature: ([I[III)V
  */
-JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_edge
+JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_standardGradient
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+
+/*
+ * Class:     processor_OpenCV_GrayscaleMorphology
+ * Method:    externalGradient
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_externalGradient
+  (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
+
+/*
+ * Class:     processor_OpenCV_GrayscaleMorphology
+ * Method:    internalGradient
+ * Signature: ([I[III)V
+ */
+JNIEXPORT void JNICALL Java_processor_OpenCV_GrayscaleMorphology_internalGradient
   (JNIEnv *, jclass, jintArray, jintArray, jint, jint);
 
 /*
