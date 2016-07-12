@@ -28,8 +28,8 @@
         android:id="@+id/binary_otsu_button"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/binary_histogram_imageView"
+        android:layout_below="@+id/binary_seekbar"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="right|top"
         android:text="otsu" />
 

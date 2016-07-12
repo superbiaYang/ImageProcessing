@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +14,8 @@
         android:layout_alignStart="@+id/median_blur_button"
         android:layout_gravity="start|top"
         android:inputType="number"
-        android:text="3" />
+        android:text="3"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/median_blur_button"
@@ -22,7 +24,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/median_blur_editText"
         android:layout_gravity="start|top"
-        android:text="median" />
+        android:text="median"
+        app:layout_widthPercent="33%" />
 
     <EditText
         android:id="@+id/mean_blur_editText"
@@ -33,7 +36,8 @@
         android:layout_alignStart="@+id/mean_blur_button"
         android:ems="10"
         android:inputType="number"
-        android:text="3" />
+        android:text="3"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/mean_blur_button"
@@ -42,7 +46,8 @@
         android:layout_below="@+id/median_blur_editText"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal|top"
-        android:text="mean" />
+        android:text="mean"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/gaussian_blur_button"
@@ -51,7 +56,8 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/gaussian_blur_sigma_editText"
         android:layout_gravity="end|top"
-        android:text="gaussian" />
+        android:text="gauss"
+        app:layout_widthPercent="33%" />
 
     <EditText
         android:id="@+id/gaussian_blur_size_editText"
@@ -61,7 +67,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/gaussian_blur_button"
         android:inputType="number"
-        android:text="3" />
+        android:text="3"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/sobel_button"
@@ -69,7 +76,8 @@
         android:layout_height="40dp"
         android:layout_alignEnd="@+id/median_blur_button"
         android:layout_alignParentBottom="true"
-        android:text="sobel" />
+        android:text="sobel"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/prewitt_button"
@@ -77,7 +85,8 @@
         android:layout_height="40dp"
         android:layout_alignTop="@+id/sobel_button"
         android:layout_centerHorizontal="true"
-        android:text="prewitt" />
+        android:text="prewitt"
+        app:layout_widthPercent="33%" />
 
     <Button
         android:id="@+id/roberts_button"
@@ -85,7 +94,8 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/gaussian_blur_button"
-        android:text="roberts" />
+        android:text="robert"
+        app:layout_widthPercent="33%" />
 
     <EditText
         android:id="@+id/gaussian_blur_sigma_editText"
@@ -95,6 +105,7 @@
         android:layout_alignStart="@+id/gaussian_blur_size_editText"
         android:layout_below="@+id/gaussian_blur_size_editText"
         android:inputType="numberDecimal"
-        android:text="0.0" />
+        android:text="0.0"
+        app:layout_widthPercent="33%" />
 
-</RelativeLayout>
+</android.support.percent.PercentRelativeLayout>
