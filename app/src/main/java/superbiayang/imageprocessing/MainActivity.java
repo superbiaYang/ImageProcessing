@@ -44,6 +44,7 @@ import processor.OpenCV.Filter;
 import processor.OpenCV.GrayscaleMorphology;
 import processor.OpenCV.Morphology;
 import view.activity.ElementActivity;
+import view.activity.ImageActivity;
 import view.fragment.AlgebraFragment;
 import view.fragment.BasicFragment;
 import view.fragment.BinaryFragment;
@@ -137,6 +138,12 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("type", elementType);
             intent.putExtra("size", elementSize);
             startActivityForResult(intent, OPEN_ELEMENT_EDITOR);
+            return true;
+        } else if (id == R.id.view_pic) {
+            Intent intent = new Intent(MainActivity.this, ImageActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            ImageActivity.setPic(curPic);
+            startActivity(intent);
             return true;
         }
 
