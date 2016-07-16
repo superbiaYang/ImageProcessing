@@ -17,7 +17,7 @@ public class Algebra {
                 if (x < pic_b.getWidth() && y < pic_b.getHeight()) {
                     color_b = pixels_b[x + y * pic_b.getWidth()];
                 }
-                int alpha = (((color_a & 0xFF000000) >>> 24) + ((color_b & 0xFF000000) >>> 24)) / 2;
+                int alpha = (color_a & 0xFF000000) >>> 24;
                 int red = (((color_a & 0x00FF0000) >>> 16) + ((color_b & 0x00FF0000) >>> 16)) / 2;
                 int green = (((color_a & 0x0000FF00) >>> 8) + ((color_b & 0x0000FF00) >>> 8)) / 2;
                 int blue = ((color_a & 0x000000FF) + (color_b & 0x000000FF)) / 2;
@@ -47,7 +47,7 @@ public class Algebra {
                 if (x < pic_b.getWidth() && y < pic_b.getHeight()) {
                     color_b = pixels_b[x + y * pic_b.getWidth()];
                 }
-                int alpha = ((color_a & 0xFF000000) >>> 24) - ((color_b & 0xFF000000) >>> 24);
+                int alpha = (color_a & 0xFF000000) >>> 24;
                 int red = ((color_a & 0x00FF0000) >>> 16) - ((color_b & 0x00FF0000) >>> 16);
                 int green = ((color_a & 0x0000FF00) >>> 8) - ((color_b & 0x0000FF00) >>> 8);
                 int blue = (color_a & 0x000000FF) - (color_b & 0x000000FF);
@@ -81,7 +81,8 @@ public class Algebra {
                 if (x < pic_b.getWidth() && y < pic_b.getHeight()) {
                     color_b = pixels_b[x + y * pic_b.getWidth()];
                 }
-                int alpha = ((color_a & 0xFF000000) >>> 24) * ((color_b & 0xFF000000) >>> 24);
+                int alpha = (color_a & 0xFF000000) >>> 24;
+                ;
                 int red = ((color_a & 0x00FF0000) >>> 16) * ((color_b & 0x00FF0000) >>> 16);
                 int green = ((color_a & 0x0000FF00) >>> 8) * ((color_b & 0x0000FF00) >>> 8);
                 int blue = (color_a & 0x000000FF) * (color_b & 0x000000FF);
