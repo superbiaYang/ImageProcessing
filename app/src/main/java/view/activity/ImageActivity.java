@@ -20,7 +20,7 @@ public class ImageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
-        if (pic == null) {
+        if (pic == null || pic.getPixels() == null || pic.getPixelsNum() == 0) {
             return;
         }
 

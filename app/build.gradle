@@ -7,7 +7,7 @@ android {
         applicationId "superbiayang.imageprocessing"
         minSdkVersion 19
         targetSdkVersion 24
-        versionName '0.9.160712'
+        versionName '1.0.0'
     }
     sourceSets.main.jni.srcDirs = []
     sourceSets.main.jniLibs.srcDirs = ['src/main/jniLibs', 'sdk/opencv/libs']
